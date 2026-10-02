@@ -1,6 +1,6 @@
 # GitHub 发布与维护
 
-公开仓库为 [ry535687-ux/DriveClarify](https://github.com/ry535687-ux/DriveClarify)，源码通过已连接的 GitHub 插件提交到 `main`。模型和归档的独立资产版本为 `v0.1.0-assets`；目前大文件已打包，上传仍等待 GitHub CLI 网页授权。完整发布状态同时见 README。
+公开仓库为 [ry535687-ux/DriveClarify](https://github.com/ry535687-ux/DriveClarify)，源码通过已连接的 GitHub 插件提交到 `main`。模型和归档的独立资产版本为 `v0.1.0-assets`；7 个大文件/清单附件已公开发布，GitHub 返回的大小与 SHA-256 全部核验通过。完整发布状态同时见 README。
 
 ## 可审阅的源码清单
 
@@ -20,7 +20,7 @@ python engineering/reproduce.py --root build/github-preview-002 paper --output b
 
 `engineering/release_assets.json` 记录所有下载 URL、大小、摘要和分片关系。基础模型使用固定 Hugging Face 提交；本项目适配模型、现有记录和论文附件使用 Releases。
 
-维护者完成 GitHub CLI 登录后，可使用下面命令发布已审阅的资产。这里的 `build/release-assets/` 是本机打包目录，不进入 Git。
+首版资产已通过 GitHub CLI 发布。维护新版本时可参考下面命令；已存在的公开标签不要重复创建或覆盖。这里的 `build/release-assets/` 是本机打包目录，不进入 Git。
 
 ```bash
 gh release create v0.1.0-assets --repo ry535687-ux/DriveClarify \

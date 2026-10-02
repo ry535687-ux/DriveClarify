@@ -150,8 +150,14 @@ def native_doctor(root, args):
                 status = "VERIFIED" if sha(path) == record["sha256"] else "HASH_MISMATCH"
         checks.append({"asset": record["key"], "status": status, "source": record["source"]})
     site = paths["native_site_packages"]
-    distributions = {d.metadata["Name"].lower().replace("_", "-"): d.version
-                     for d in importlib.metadata.distributions(path=[str(site)]) if d.metadata["Name"]}
+    sites = [site]
+    if "native_extra_site_packages" in paths:
+        sites.insert(0, paths["native_extra_site_packages"])
+    distributions = {}
+    for directory in sites:
+        for distribution in importlib.metadata.distributions(path=[str(directory)]):
+            if distribution.metadata["Name"]:
+                distributions.setdefault(distribution.metadata["Name"].lower().replace("_", "-"), distribution.version)
     for name, expected in lock["key_packages"].items():
         actual = distributions.get(name)
         checks.append({"asset": name, "expected": expected, "actual": actual,
@@ -257,6 +263,7 @@ def export_source(root, output):
                     "GIT_TRACKING_MANIFEST.md", "requirements/*.txt", ".github/workflows/*.yml",
                     "engineering/**/*.md", "engineering/**/*.py", "engineering/**/*.json",
                     "engineering/**/*.patch", "engineering/**/*.yaml", "engineering/**/*.txt",
+                    "engineering/**/*.xml", "engineering/**/*.sh",
                     "tests/offline_v0/**/*", "tests/test_paper*binding.py", "tests/engineering/*.py", "design/v0/**/*",
                     "scripts/*b2d*", "scripts/*bench2drive*"]:
         names.update(p.relative_to(root).as_posix() for p in root.glob(pattern)

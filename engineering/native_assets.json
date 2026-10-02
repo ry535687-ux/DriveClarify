@@ -119,7 +119,11 @@
     "transformers": "4.46.3",
     "hydra-core": "1.3.2",
     "omegaconf": "2.3.0",
-    "pytorch-lightning": "2.4.0"
+    "pytorch-lightning": "2.4.0",
+    "scipy": "1.10.1",
+    "pandas": "2.0.3",
+    "networkx": "3.1",
+    "markupsafe": "2.1.5"
   },
   "checkpoints": [
     {
@@ -144,12 +148,15 @@
     "reports/driveclarify_transparent_bypass_full_bench2drive_v2/FULL_B2D_ROUTE_MANIFEST.json",
     "reports/driveclarify_b2d_final_authoritative_handoff_20260914/B2D_FINAL_AUTHORITATIVE_SUMMARY.md",
     "reports/driveclarify_paper_runtime_fidelity_20260916/FINAL_REPORT.md",
-    "deliverables/paper_revision_20260915/FINAL_REPORT.md"
+    "deliverables/paper_revision_20260915/FINAL_REPORT.md",
+    "reports/driveclarify_transparent_bypass_full_bench2drive_v2/interface_config.json",
+    "reports/driveclarify_transparent_bypass_full_bench2drive_v2/carla_bootstrap_proxy/CarlaUE4.sh",
+    "reports/driveclarify_v3_short_prefix_a1_fast_track/a1_training_v2/selected/.hydra/config.yaml"
   ],
   "remaining": [
-    "历史原生脚本中的绝对路径尚需迁移，并为新运行使用独立输出目录。",
-    "论文采用的外部220路线A0/A1最终逐路线结果未在本机找到。",
-    "新答案绑定接口尚缺真实分支场景资格和正式RGB记录。",
-    "本次未验证GPU、显示、干净环境安装或原生驾驶。"
+    "完整 Bench2Drive 可用 engineering/bench2drive.py 生成新计划；其他历史入口仍保留原宿主路径。",
+    "外部220路线A0/A1最终结果不在仓库中；由复现者执行新配对实验生成。",
+    "新答案绑定接口尚缺真实分支场景资格和正式RGB记录，不属于无上下文 Bench2Drive 旁路能力证明。",
+    "原生安装版本已核验公开元数据，但干净 GPU/显示环境安装与真实驾驶未在本轮验证。"
   ]
 }

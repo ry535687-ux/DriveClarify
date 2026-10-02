@@ -2,7 +2,7 @@
 
 **面向语言指令驾驶的选择性澄清研究：结合候选任务后果、证据完整性与剩余时间，判断何时执行、等待或询问。**
 
-这个仓库包含离线决策器、论文受控实验、历史闭环分析，以及与 SimLingo / CARLA 对接的研究代码。当前已提供可独立运行的 CPU 测试和论文统计复现入口；完整原生驾驶复现仍有明确的资产与迁移缺口，见[复现说明](engineering/REPRODUCING.md)。
+这个仓库包含离线决策器、论文受控实验、历史闭环分析，以及与 SimLingo / CARLA 对接的研究代码。已提供 CPU 论文重算、公开模型/数据下载，以及 CARLA / Bench2Drive 的安装、单路线试跑、220 路线启动和结果收集入口。原生驾驶由复现者在 GPU 主机运行，步骤见[原生启动指南](engineering/BENCH2DRIVE.md)。
 
 ## 方法概览
 
@@ -25,12 +25,12 @@ flowchart LR
 一键完成环境安装、测试、演示和论文统计复现：
 
 ```bash
-git clone https://github.com/ry535687-ux/DriveClarify.git
+git clone --branch v0.1.0 --single-branch https://github.com/ry535687-ux/DriveClarify.git
 cd DriveClarify
 bash reproduce.sh
 ```
 
-一键脚本需要 **Python 3.13**（可用 `bash reproduce.sh --python python3.13` 指定）。脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 305 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
+一键脚本需要 **Python 3.13**（可用 `bash reproduce.sh --python python3.13` 指定）。脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 311 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
 
 容器方式：
 
@@ -62,9 +62,9 @@ python engineering/reproduce.py paper --output build/paper-001
 
 ## 模型、原始记录和论文附件
 
-下载清单位于 [release_assets.json](engineering/release_assets.json)，包含固定上游版本、文件大小与 SHA-256。上游 SimLingo 基础权重和 InternVL2-1B 从 Hugging Face 下载；本项目的适配权重与实验归档使用 [GitHub Releases](https://github.com/ry535687-ux/DriveClarify/releases)。**本项目大文件已在本地打包，Release 上传正在等待 GitHub CLI 网页授权；完成前以下 Release 下载命令会报资产不存在。**
+下载清单位于 [release_assets.json](engineering/release_assets.json)，包含固定上游版本、文件大小与 SHA-256。上游 SimLingo 基础权重和 InternVL2-1B 从 Hugging Face 下载；本项目的适配权重与实验归档使用 [GitHub Releases](https://github.com/ry535687-ux/DriveClarify/releases)。**本项目模型分片、历史实验记录、训练来源及论文附件已公开发布到 [v0.1.0-assets](https://github.com/ry535687-ux/DriveClarify/releases/tag/v0.1.0-assets)**；7 个附件的 GitHub 摘要已核对，三个归档已实际公开下载并校验解压。
 
-发布完成后的下载入口：
+下载入口：
 
 ```bash
 # 4226 份历史场景/轨迹/记录，以及适配训练的配置、输入和选择记录
@@ -79,6 +79,20 @@ python3 engineering/assets.py --profile native --output build/native-workspace
 
 重复运行可续传；每个文件先验证摘要再使用。适配权重自动合并分片，归档解压到独立目录，已有内容不同则拒绝覆盖。这些命令准备已有资产；原生代码还原、CARLA 地图和硬件条件见[复现说明](engineering/REPRODUCING.md#原生环境与模型)。
 
+## 开始新的原生驾驶实验
+
+按[原生启动指南](engineering/BENCH2DRIVE.md)安装独立 Python 3.8 环境、CARLA 0.9.15 和额外地图，再还原源码并下载模型。之后从一条 A0/A1 配对开始：
+
+```bash
+python3 engineering/bench2drive.py plan \
+  --paths build/native-workspace/paths.local.json \
+  --output build/b2d-smoke-001 --offscreen
+python3 engineering/bench2drive.py run --plan build/b2d-smoke-001 --dry-run
+python3 engineering/bench2drive.py run --plan build/b2d-smoke-001
+```
+
+最后一条命令会加载模型并启动 CARLA。试跑确认环境后，用 `plan --all` 生成 220 路线 / 440 次运行的新计划，再用 `run --resume` 续跑、`collect` 收集首次合法结果。已验证 936 个冻结科学源文件、220 个路线和 440 条命令的计划生成；本轮没有实际启动 GPU 驾驶。最终路线结果由复现者生成。
+
 ## 实验与入口
 
 | 目标 | 入口 | 所需环境与状态 |
@@ -89,7 +103,7 @@ python3 engineering/assets.py --profile native --output build/native-workspace
 | 论文图表与排版 | [复现说明](engineering/REPRODUCING.md#图表与论文) | 部分图依赖原生地图、相机归档及外部论文素材 |
 | SimLingo / CARLA 依赖检查 | `reproduce.py doctor --profile native --paths engineering/paths.local.json` | 只读检查；不加载模型、不启动仿真 |
 | 新答案绑定接口 | `driveclarify_paper_runtime/agent_entry.py` | 开发入口；CPU 检查通过，真实分支资格尚未完成 |
-| 历史 Bench2Drive 协议 | `reports/driveclarify_transparent_bypass_full_bench2drive_v2/` | 冻结协议及工具；本机缺论文采用的最终逐路线结果 |
+| 新 Bench2Drive 配对实验 | [安装和启动指南](engineering/BENCH2DRIVE.md)、`engineering/bench2drive.py` | 冻结路线/权重；先单路线资格，再 220 路线配对，由读者生成新结果 |
 
 表中的 `reproduce.py` 均指 `engineering/reproduce.py`。原生环境安装、两种不同权重的身份、上游补丁与数据关系，统一见[复现说明](engineering/REPRODUCING.md)。
 
@@ -118,7 +132,7 @@ build/                      新复现结果与本地发布预览，不进入 Git
 
 论文离线主实验使用 176 条冻结输入、22 个布局，其中 132 条标签有定义、44 条未定义；六个策略行共产生 1,056 条结果。受控候选、结构化证据、理想回答和等权反事实意图是这些结果的前提。`Random-Query` 是解析期望，不是一次随机驾驶实测；未定义样本不能当作正确或错误。
 
-历史闭环统计的复现只是重新计算已有记录。当前新增答案绑定接口未完成真实分支资格；历史局部停靠两臂都没有 task-correct safe completion。论文使用的另一台机器上的 220 路线 Bench2Drive 汇总缺少本机可追溯的最终逐路线文件，不能靠现有中途账本补成完整结果。详细边界见[论文交付说明](deliverables/paper_revision_20260915/FINAL_REPORT.md)。
+历史闭环统计的复现只是重新计算已有记录。当前新增答案绑定接口未完成真实分支资格；历史局部停靠两臂都没有 task-correct safe completion。论文使用的另一台机器上的 220 路线 Bench2Drive 汇总缺少本机可追溯的最终逐路线文件，不使用现有中途账本补成完整结果；复现者通过新的启动入口自行生成全量结果。详细边界见[论文交付说明](deliverables/paper_revision_20260915/FINAL_REPORT.md)。
 
 ## 开发与发布
 

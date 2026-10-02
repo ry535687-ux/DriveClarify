@@ -8,7 +8,7 @@
 | 论文离线计算 | 41 个输入文件与 14 个参考输出 | `paper` | 本机独立目录重算逐字节一致 |
 | 历史原生统计 | 冻结 episode 表、配对结果 | 包含在 `paper` 中 | 统计重算；不重跑车辆 |
 | 图表及 LaTeX | 图源、原生地图、相机归档、论文源 | 见下文 | 原有产物可查；本次未重新绘图/编译 |
-| CARLA 新运行 | 环境、权重、地图、完整场景、原生接口 | 只提供依赖检查及历史入口导航 | 尚未达到可直接全量复现状态 |
+| CARLA 新运行 | 原生环境、公开权重、冻结路线与地图 | [Bench2Drive 启动指南](BENCH2DRIVE.md) | 文件/计划/命令已验证；真实 GPU 驾驶由复现者执行 |
 
 ## CPU 论文复现
 
@@ -33,7 +33,7 @@ deliverables/paper_revision_20260915/analyze.py closed-loop
 
 `REPRODUCTION_RECEIPT.json` 的 `PASS` 只表示这些冻结数据上的输出重现；不包含新训练、视觉模型前向、原始数据重新采集或新驾驶。参考结果不自动更新；若更换 NumPy / SciPy 导致数值序列或序列化变化，应检查差异，不能直接刷新摘要消除失败。
 
-`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，305 项测试与 14 个参考输出均通过。远程 Python 3.10 的 CPU 合同测试已通过，但论文参考输出的逐字节检查未通过，因此论文复现明确固定使用 Python 3.13；不通过修改参考摘要或放宽比较消除差异。CI 在两种 Python 上运行合同测试，在 Python 3.13 上运行完整论文重算。Linux CPU 容器已用 `--network=host` 完成干净安装、305 项测试、49 个合成案例及 14 个参考输出逐字节比对。
+`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，311 项测试与 14 个参考输出均通过。远程 Python 3.10 的 CPU 合同测试已通过，但论文参考输出的逐字节检查未通过，因此论文复现明确固定使用 Python 3.13；不通过修改参考摘要或放宽比较消除差异。CI 在两种 Python 上运行合同测试，在 Python 3.13 上运行完整论文重算。Linux CPU 容器已用 `--network=host` 完成干净安装、311 项测试、49 个合成案例及 14 个参考输出逐字节比对。
 
 ## 原生环境与模型
 
@@ -93,7 +93,7 @@ cp -a engineering/vendor/simlingo-extra/. ../simlingo-reproduction/
 | `base_checkpoint` | 2569679322 | `ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28` | 原生公开任务初始化身份 |
 | `b2d_checkpoint` | 2569681502 | `cc6873e2a7778140ff7af3fd7d3578114b26bd6a47974e955f0845ddd2178044` | 冻结 Bench2Drive V2 的 A0/A1 共同权重 |
 
-适配权重已在本机流式读取并验证冻结摘要；基础权重已核对公开上游 LFS 的 SHA-256 与字节数。`--hash-weights` 可显式执行流式 SHA-256；不反序列化模型。对应 Hydra 配置已按冻结摘要保存为 `env/base-model-config.yaml` 与 `env/b2d-model-config.yaml`；其中历史宿主路径仍需在目标环境的新副本中调整。权重与模型缓存的完整下载清单在 `release_assets.json`；下载及分片合并使用 `assets.py --profile native`。基础权重固定到 Hugging Face 提交 `26c7c89e797d4e25bbf640013317af8da26a5454`，InternVL2-1B 固定到 `0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187`，本机视觉大权重也已流式校验。适配权重、训练来源与历史记录已打包，GitHub Release 大文件上传等待网页授权。CARLA 服务端与额外地图仍按上游安装流程获取，不进入源码 Git 仓库。
+适配权重已在本机流式读取并验证冻结摘要；基础权重已核对公开上游 LFS 的 SHA-256 与字节数。`--hash-weights` 可显式执行流式 SHA-256；不反序列化模型。对应 Hydra 配置已按冻结摘要保存为 `env/base-model-config.yaml` 与 `env/b2d-model-config.yaml`；其中历史宿主路径仍需在目标环境的新副本中调整。权重与模型缓存的完整下载清单在 `release_assets.json`；下载及分片合并使用 `assets.py --profile native`。基础权重固定到 Hugging Face 提交 `26c7c89e797d4e25bbf640013317af8da26a5454`，InternVL2-1B 固定到 `0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187`，本机视觉大权重也已流式校验。适配权重、训练来源与历史记录已公开发布到 `v0.1.0-assets`；所有附件的 GitHub SHA-256 已核对，三个归档已实际公开下载并解压。CARLA 服务端与额外地图仍按上游安装流程获取，不进入源码 Git 仓库。
 
 原生依赖预检：
 
@@ -105,7 +105,7 @@ python engineering/reproduce.py doctor --profile native --paths engineering/path
 python engineering/reproduce.py doctor --profile native --paths engineering/paths.local.json --hash-weights
 ```
 
-本机已生成的 `paths.local.json` 不进入发布包。检查器不会运行指定的原生 Python，也不会 import `carla` / `torch`。存在性、版本与摘要各自报告；原生 profile 当前固定返回 **2** 表示整体复现仍待完成，不是仿真已通过。新配置仅接入检查器，尚未替换全部历史绝对路径。
+本机已生成的 `paths.local.json` 不进入发布包。检查器不会运行指定的原生 Python，也不会 import `carla` / `torch`。存在性、版本与摘要各自报告；原生 profile 当前固定返回 **2** 表示整体复现仍待完成，不是仿真已通过。完整 Bench2Drive 启动器会把配置接入独立运行副本；其他历史入口保留原始路径，详见 `BENCH2DRIVE.md`。
 
 ## 原生实验入口与数据
 
@@ -116,9 +116,9 @@ python engineering/reproduce.py doctor --profile native --paths engineering/path
 | 新答案绑定开发 | `driveclarify_paper_runtime/agent_entry.py` | 真实分支场景、独立截止点、正式 RGB 及任务正确性资格 |
 | 完整 Bench2Drive V2 | `reports/driveclarify_transparent_bypass_full_bench2drive_v2/tooling/` | 上游修改、适配权重、220 路线、配置迁移、新输出根目录 |
 
-历史 `scripts/run_full_bench2drive_unattended.sh` 会启动宿主 systemd 服务，工具中也有固定输出路径与恢复行为，不能直接作为新机器的快速开始命令。此次工程入口没有隐式原生运行分支。
+历史 `scripts/run_full_bench2drive_unattended.sh` 会启动宿主 systemd 服务，工具中也有固定输出路径与恢复行为，不能直接作为新机器的快速开始命令。新的原生启动入口是 `engineering/bench2drive.py run`，它明确启动新驾驶并写入新计划目录；不要调用旧 unattended 脚本。
 
-当前发布预览包含可复现离线输入与相关原生协议，**不是所有历史运行数据的备份**。大文件归档提供本机已有的五组历史实验记录（4226 文件）及适配训练配置、输入、选择记录（503 文件）；真实相机画面只包含本机已有文件，不能补出未采集的画面。尚缺的完整复现项是：论文采用的外部 220 路线最终 A0/A1 逐路线结果、新答案绑定运行资格，以及所有历史入口的可迁移运行环境。旧中途账本或名为 `FINAL_*` 的文件不能替代缺失的最终结果。
+当前发布预览包含可复现离线输入与相关原生协议，**不是所有历史运行数据的备份**。大文件归档提供本机已有的五组历史实验记录（4226 文件）及适配训练配置、输入、选择记录（503 文件）；真实相机画面只包含本机已有文件，不能补出未采集的画面。外部 220 路线最终结果不提供预填值，用户选择由复现者通过新入口自行运行生成。新答案绑定分支的真实资格仍未完成，不能由无上下文透明旁路基准替代。旧中途账本或名为 `FINAL_*` 的文件不能替代缺失的最终结果。
 
 ## 图表与论文
 

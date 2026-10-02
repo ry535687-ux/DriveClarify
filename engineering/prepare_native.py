@@ -41,6 +41,16 @@ def main():
         path = sim / record["path"]
         if hashlib.sha256(path.read_bytes()).hexdigest() != record["sha256"]:
             raise ValueError(f"还原后摘要不符：{record['path']}")
+    freeze = json.loads((ROOT / "reports/driveclarify_transparent_bypass_full_bench2drive_v2/FULL_B2D_FREEZE_RECEIPT.json").read_text())
+    for route in freeze["pair_order"]:
+        source = ROOT / "engineering/routes" / Path(route["route_path"]).name
+        if hashlib.sha256(source.read_bytes()).hexdigest() != route["route_sha256"]:
+            raise ValueError(f"冻结路线摘要不符：{source}")
+        destination = sim / Path(route["route_path"]).relative_to("/home/buaa/wrh/simlingo")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        if destination.exists() and destination.read_bytes() != source.read_bytes():
+            raise ValueError(f"拒绝覆盖不同的上游路线：{destination}")
+        shutil.copy2(source, destination)
     python = args.native_python.resolve()
     paths = {
         "simlingo_root": str(sim), "carla_root": str(args.carla_root.resolve()),
@@ -55,6 +65,7 @@ def main():
         json.dump(paths, stream, ensure_ascii=False, indent=2)
         stream.write("\n")
     receipt = {"status": "PASS", "verified_source_files": len(lock["simlingo_files"]),
+               "verified_route_files": len(freeze["pair_order"]),
                "base_commit": lock["simlingo_base_commit"], "paths": str(config),
                "scope": "源代码还原；环境与模型资产另行准备；未运行原生实验"}
     (workspace / "SOURCE_RESTORE_RECEIPT.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n")

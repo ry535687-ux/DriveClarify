@@ -12,7 +12,7 @@
 外部 SimLingo 仓库仍只读。当前本地修改的补丁和四个附加源文件保存于
 `engineering/vendor/`，供新的独立克隆还原；没有修改外部原工作区。
 
-源码已通过 GitHub 插件发布到 [ry535687-ux/DriveClarify](https://github.com/ry535687-ux/DriveClarify)。原研究目录的 Git 历史未改写；大模型和归档已在本地打包，Release 上传等待 CLI 网页授权。完整 CARLA 新运行仍有已披露的资格与数据缺口。
+源码已通过 GitHub 插件发布到 [ry535687-ux/DriveClarify](https://github.com/ry535687-ux/DriveClarify)。原研究目录的 Git 历史未改写；大模型和归档已公开发布到 `v0.1.0-assets`，并验证服务器摘要与归档下载。完整 CARLA 新运行仍有已披露的资格与数据缺口。
 具体清单见 `engineering/paper_assets.json`、`engineering/native_assets.json`
 及导出时生成的 `RELEASE_MANIFEST.json`。发布和维护操作见
 `engineering/PUBLISHING.md`；仍禁止在研究工作区直接 `git add .`。
