@@ -1,0 +1,333 @@
+{
+  "contract_schema_version": "driveclarify.fix_gate_expectations.v0.1",
+  "contract_reference": [
+    "design/v0/DriveClarify_v0_Algorithm_Specification.md",
+    "design/v0/DRIVECLARIFY_STATE_MACHINE.md",
+    "design/v0/ALGORITHM_1_PSEUDOCODE.md",
+    "reports/offline_v0/INDEPENDENT_IMPLEMENTATION_AUDIT.md"
+  ],
+  "timing_cases": [
+    {
+      "fix_gate_id": "F1_TIMING_METADATA_MISSING",
+      "metadata_mode": "ABSENT",
+      "metadata": null,
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_METADATA_MISSING",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Algorithm Specification §8: all required timing metadata must be known, valid, fresh, and trusted"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_TRUSTED_MISSING",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "s",
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_SOURCE_UNTRUSTED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: trusted must be explicitly true"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_TRUSTED_FALSE",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "s",
+        "trusted": false,
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_SOURCE_UNTRUSTED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: untrusted timing cannot authorize ACT, ASK, or HOLDING"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_FRESH_MISSING",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "s",
+        "trusted": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_STALE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: fresh must be explicitly true"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_FRESH_FALSE",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "s",
+        "trusted": true,
+        "fresh": false
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_STALE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: stale timing cannot authorize ACT, ASK, or HOLDING"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_SOURCE_MISSING",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "unit": "s",
+        "trusted": true,
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_SOURCE_MISSING",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: source must be explicit and non-empty"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_SOURCE_UNKNOWN",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "UNRECOGNIZED_SOURCE",
+        "unit": "s",
+        "trusted": true,
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_SOURCE_UNKNOWN",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: offline source allowlist contains only SYNTHETIC_TEST_ONLY"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_UNIT_MISSING",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "trusted": true,
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_UNIT_INVALID",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: unit must be explicitly s"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_UNIT_NOT_SECONDS",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "milliseconds",
+        "trusted": true,
+        "fresh": true
+      },
+      "expected_status": "UNKNOWN",
+      "expected_reason_code": "TIMING_UNIT_INVALID",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: non-second units are invalid in the offline evaluator"
+    },
+    {
+      "fix_gate_id": "F1_TIMING_VALID_EXPLICIT_SYNTHETIC",
+      "metadata_mode": "EXPLICIT",
+      "metadata": {
+        "source": "SYNTHETIC_TEST_ONLY",
+        "unit": "s",
+        "trusted": true,
+        "fresh": true
+      },
+      "expected_status": "FEASIBLE",
+      "expected_reason_code": "TIMING_FEASIBLE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F1: only complete explicit synthetic timing metadata may be evaluated"
+    }
+  ],
+  "question_cases": [
+    {
+      "fix_gate_id": "F2_HISTORY_EMPTY_BUDGET_ONE",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "history_signatures": [],
+      "query_budget_remaining": 1,
+      "pending_question": false,
+      "expected_decision": "ASK",
+      "expected_reason_code": "CRITICAL_ASK_TIMELY",
+      "expected_question_dispatch": "SEND_QUESTION",
+      "expected_trace_fields": {
+        "query_budget_before": 1,
+        "query_budget_after": 0,
+        "successful_question_count_after": 1
+      },
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §4: one successful semantic question per episode"
+    },
+    {
+      "fix_gate_id": "F2_HISTORY_SENT_BUDGET_ZERO",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "history_signatures": [
+        "episode-001:maneuver:z1,z2"
+      ],
+      "query_budget_remaining": 0,
+      "pending_question": false,
+      "expected_decision": "FALLBACK",
+      "expected_reason_code": "ASK_WAIT_AND_ROBUST_ACT_UNAVAILABLE",
+      "expected_question_dispatch": "NONE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §4: exhausted episode budget cannot send another question"
+    },
+    {
+      "fix_gate_id": "F2_HISTORY_SENT_BUDGET_ONE_INCONSISTENT",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "history_signatures": [
+        "episode-001:maneuver:z1,z2"
+      ],
+      "query_budget_remaining": 1,
+      "pending_question": false,
+      "expected_decision": "FALLBACK",
+      "expected_reason_code": "QUERY_HISTORY_BUDGET_INCONSISTENT",
+      "expected_question_dispatch": "NONE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F2: non-empty successful history requires remaining budget zero"
+    },
+    {
+      "fix_gate_id": "F2_OTHER_SIGNATURE_CANNOT_BYPASS",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "history_signatures": [
+        "episode-001:lane:z1,z2"
+      ],
+      "query_budget_remaining": 0,
+      "pending_question": false,
+      "expected_decision": "FALLBACK",
+      "expected_reason_code": "ASK_WAIT_AND_ROBUST_ACT_UNAVAILABLE",
+      "expected_question_dispatch": "NONE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F2: any successful question history blocks a second semantic question"
+    },
+    {
+      "fix_gate_id": "F2_PENDING_QUESTION_CANNOT_REASK",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "history_signatures": [
+        "episode-001:maneuver:z1,z2"
+      ],
+      "query_budget_remaining": 0,
+      "pending_question": true,
+      "expected_decision": "WAIT",
+      "expected_reason_code": "WAITING_FOR_ANSWER",
+      "expected_question_dispatch": "NONE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §4: pending question enters WAIT and never resends"
+    }
+  ],
+  "holding_cases": [
+    {
+      "fix_gate_id": "F3_ASK_STRUCTURED_HOLDING",
+      "base_fixture_id": "TIMING_GT_3_60",
+      "expected_decision": "ASK",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Algorithm Specification §2.2: ASK is question dispatch plus validated holding"
+    },
+    {
+      "fix_gate_id": "F3_PREQUESTION_WAIT_STRUCTURED_HOLDING",
+      "base_fixture_id": "TIMING_EQ_3_50",
+      "expected_decision": "WAIT",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §5: pre-question WAIT executes validated holding"
+    },
+    {
+      "fix_gate_id": "F3_POSTQUESTION_WAIT_STRUCTURED_HOLDING",
+      "base_fixture_id": "WAIT_AFTER_QUESTION",
+      "expected_decision": "WAIT",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §5: post-question WAIT executes validated holding"
+    },
+    {
+      "fix_gate_id": "F3_ACT_HAS_NO_HOLDING_SUMMARY",
+      "base_fixture_id": "ONE_SAFE_LEGAL_CANDIDATE",
+      "expected_decision": "ACT",
+      "expected_holding_required": false,
+      "expected_holding_summary_present": false,
+      "expected_holding_id": null,
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F3: ACT semantic output has no holding binding"
+    },
+    {
+      "fix_gate_id": "F3_INVALID_HOLDING_FALLBACK",
+      "base_fixture_id": "NO_SAFE_HOLDING",
+      "expected_decision": "FALLBACK",
+      "expected_holding_required": false,
+      "expected_holding_summary_present": false,
+      "expected_holding_id": null,
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F3: invalid holding cannot enter ASK or WAIT"
+    },
+    {
+      "fix_gate_id": "F3_UNKNOWN_HOLDING_FALLBACK",
+      "base_fixture_id": "UNKNOWN_HOLDING_VALIDITY",
+      "expected_decision": "FALLBACK",
+      "expected_holding_required": false,
+      "expected_holding_summary_present": false,
+      "expected_holding_id": null,
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "Fix Gate F3: UNKNOWN holding validity cannot enter ASK or WAIT"
+    },
+    {
+      "fix_gate_id": "F3_ANSWER_NO_RESPONSE_WAIT_HOLDING",
+      "base_fixture_id": "ANSWER_NO_RESPONSE",
+      "expected_decision": "WAIT",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-answer-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §6: no-answer WAIT continues a validated holding"
+    },
+    {
+      "fix_gate_id": "F3_ANSWER_INVALID_WAIT_HOLDING",
+      "base_fixture_id": "ANSWER_INVALID_CONTINUE_WAIT",
+      "expected_decision": "WAIT",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-answer-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §6: invalid-answer WAIT continues only a validated holding"
+    },
+    {
+      "fix_gate_id": "F3_ANSWER_AMBIGUOUS_WAIT_HOLDING",
+      "base_fixture_id": "ANSWER_STILL_AMBIGUOUS",
+      "expected_decision": "WAIT",
+      "expected_holding_required": true,
+      "expected_holding_summary_present": true,
+      "expected_holding_id": "H4-answer-synthetic",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §6: still-ambiguous WAIT continues only a validated holding"
+    }
+  ]
+}

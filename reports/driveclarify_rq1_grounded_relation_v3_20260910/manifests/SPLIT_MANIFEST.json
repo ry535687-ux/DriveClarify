@@ -1,0 +1,116 @@
+{
+  "dev_units": [
+    "TOWN01_JUNCTION_26_UNIT01",
+    "TOWN02_JUNCTION_20_UNIT01",
+    "TOWN03_JUNCTION_498_UNIT01",
+    "TOWN04_JUNCTION_483_UNIT01",
+    "TOWN05_JUNCTION_720_UNIT01",
+    "TOWN06_JUNCTION_72_UNIT01",
+    "TOWN07_JUNCTION_260_UNIT01",
+    "TOWN10HD_JUNCTION_664_UNIT01"
+  ],
+  "historical_units": [
+    "TOWN01_JUNCTION_110_UNIT01",
+    "TOWN01_JUNCTION_54_UNIT01",
+    "TOWN01_JUNCTION_87_UNIT01",
+    "TOWN02_JUNCTION_76_UNIT01",
+    "TOWN03_JUNCTION_576_UNIT01",
+    "TOWN03_JUNCTION_655_UNIT01",
+    "TOWN04_JUNCTION_1103_UNIT01",
+    "TOWN05_JUNCTION_1126_UNIT01",
+    "TOWN05_JUNCTION_1292_UNIT01",
+    "TOWN05_JUNCTION_1882_UNIT01",
+    "TOWN05_JUNCTION_1930_UNIT01",
+    "TOWN06_JUNCTION_838_UNIT01",
+    "TOWN07_JUNCTION_358_UNIT01",
+    "TOWN07_JUNCTION_605_UNIT01"
+  ],
+  "phrasings": [
+    "P1",
+    "P2"
+  ],
+  "relation_configs": [
+    "CFG_LONGER_VS_STRAIGHTER",
+    "CFG_LONGER_VS_SHARPER",
+    "CFG_SAME_EXPRESSION",
+    "CFG_EVIDENCE_INSUFFICIENT"
+  ],
+  "schema_version": "driveclarify.rq1_v3_split_manifest.v1",
+  "splits": {
+    "DEV": {
+      "evaluable_count": 48,
+      "family_distribution": {
+        "LMK": 16,
+        "ORD": 16,
+        "REF": 16,
+        "USC": 16
+      },
+      "label_undefined_count": 16,
+      "layout_count": 8,
+      "observation_count": 8,
+      "observations_per_layout": 1,
+      "phrasing_distribution": {
+        "P1": 32,
+        "P2": 32
+      },
+      "relation_config_distribution": {
+        "CFG_EVIDENCE_INSUFFICIENT": 16,
+        "CFG_LONGER_VS_SHARPER": 16,
+        "CFG_LONGER_VS_STRAIGHTER": 16,
+        "CFG_SAME_EXPRESSION": 16
+      },
+      "role": "实现调试与阈值校准",
+      "sample_count": 64,
+      "sample_id_manifest_sha256": "e91a683080158d74ce13380907b2e16d943bb44d154fe05690c77a763627803d",
+      "truth_distribution": {
+        "LABEL_UNDEFINED_UNDER_ALLOWED_INPUTS": 16,
+        "TASK_DIVERGENT": 16,
+        "TASK_EQUIVALENT": 32
+      }
+    },
+    "HIST": {
+      "evaluable_count": 84,
+      "family_distribution": {
+        "LMK": 32,
+        "ORD": 24,
+        "REF": 32,
+        "USC": 24
+      },
+      "label_undefined_count": 28,
+      "layout_count": 14,
+      "observation_count": 14,
+      "observations_per_layout": 1,
+      "phrasing_distribution": {
+        "P1": 56,
+        "P2": 56
+      },
+      "relation_config_distribution": {
+        "CFG_EVIDENCE_INSUFFICIENT": 28,
+        "CFG_LONGER_VS_SHARPER": 28,
+        "CFG_LONGER_VS_STRAIGHTER": 28,
+        "CFG_SAME_EXPRESSION": 28
+      },
+      "role": "已暴露历史分析，不是未见测试集",
+      "sample_count": 112,
+      "sample_id_manifest_sha256": "c089fbd256fb499c183848ba19163b9775fecce7de823ae4e31afff83b37e2f6",
+      "truth_distribution": {
+        "LABEL_UNDEFINED_UNDER_ALLOWED_INPUTS": 28,
+        "TASK_DIVERGENT": 28,
+        "TASK_EQUIVALENT": 56
+      }
+    }
+  },
+  "test_split": {
+    "layout_count": 0,
+    "observation_count": 0,
+    "reason_zh": "24 个未见测试布局没有真实观测包；新采集须原生 Ubuntu + 本地物理显示器，禁 headless/RenderOffScreen/Xvfb/VNC，且根分区仅剩约 12G。",
+    "sample_count": 0,
+    "status": "TEST_BLOCKED_NO_UNSEEN_OBSERVATIONS"
+  },
+  "undelivered_scale_declarations": [
+    "目标每布局 2 个预设初态（两个种子）：实际每布局只有 1 个真实观测，本轮不存在第二个种子。",
+    "目标 24 布局 × 8 = 192 正式测试样本：未达成。实际 DEV 64 + HIST 112 = 176，未用重复样本凑数。",
+    "22 个布局全部来自已分析的 m1_real_dataset_expansion_v3，其中 14 个只作历史分析，不申报为测试集。",
+    "四族标签仅用于分层报告；本轮歧义来源统一是指代表达指向哪个分支，不表示四种不同歧义机制。"
+  ]
+}

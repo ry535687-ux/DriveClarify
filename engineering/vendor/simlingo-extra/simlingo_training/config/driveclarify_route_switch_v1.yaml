@@ -1,0 +1,60 @@
+# Frozen DriveClarify V3 declarations.  This file is not selected by defaults.
+model:
+  route_switch_input_adapter:
+    enabled: false
+    hidden_size: 896
+    duration_outer_forwards: 16
+    tensor_name: route_switch_adapter.delta_switch
+    initialization: ALL_ZEROS
+  driveclarify_adaptation:
+    arm: A0
+    training_authorized: false
+    parameter_counts: {A0: 0, A1: 896, A2: 91008, A3: 609920}
+    a2:
+      namespace: driveclarify_route_switch_r8_v1
+      rank: 8
+      alpha: 16
+      dropout: 0.05
+      a_initialization: NORMAL_MEAN_0_STD_0.02
+      b_initialization: ALL_ZEROS
+      initial_composed_delta: EXACTLY_ZERO
+      composition: SIMULTANEOUS_ADDITIVE_RELEASED_ACTIVE_FROZEN
+      target_paths:
+        - language_model.model.base_model.model.model.layers.20.self_attn.q_proj
+        - language_model.model.base_model.model.model.layers.20.self_attn.v_proj
+        - language_model.model.base_model.model.model.layers.21.self_attn.q_proj
+        - language_model.model.base_model.model.model.layers.21.self_attn.v_proj
+        - language_model.model.base_model.model.model.layers.22.self_attn.q_proj
+        - language_model.model.base_model.model.model.layers.22.self_attn.v_proj
+        - language_model.model.base_model.model.model.layers.23.self_attn.q_proj
+        - language_model.model.base_model.model.model.layers.23.self_attn.v_proj
+    a3_trainable_tensors:
+      - route_switch_adapter.delta_switch
+      - adaptors.driving.query_embeds_wps
+      - adaptors.driving.route_head.0.weight
+      - adaptors.driving.route_head.0.bias
+      - adaptors.driving.route_head.2.weight
+      - adaptors.driving.route_head.2.bias
+      - adaptors.driving.route_head.4.weight
+    frozen_optimizer_budget:
+      seeds: [17, 29, 43]
+      optimizer: AdamW
+      betas: [0.9, 0.999]
+      epsilon: 1.0e-8
+      optimizer_steps: 12000
+      early_stopping: false
+      effective_batch_records: 64
+      record_exposures_per_seed: 768000
+      gradient_norm_clip: 1.0
+      compute_dtype: bf16
+      warmup_steps: 600
+      schedule: COSINE_TO_0.1_INITIAL_LR
+      learning_rates:
+        delta_switch: 0.003
+        lora: 0.0001
+        route_query_and_head: 0.0001
+      weight_decay:
+        delta_switch: 0.0
+        lora: 0.01
+        route_query_and_head: 0.01
+      candidate_checkpoint_steps: [2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000]

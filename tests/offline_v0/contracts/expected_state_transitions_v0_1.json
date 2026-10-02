@@ -1,0 +1,202 @@
+{
+  "contract_schema_version": "driveclarify.state_transition_expectations.v0.1",
+  "contract_reference": "design/v0/DRIVECLARIFY_STATE_MACHINE.md §3, with global fallback and COMMITTED reentry verified separately",
+  "expected_transition_count": 11,
+  "seven_state_contract": [
+    "NORMAL",
+    "AMBIGUITY_ACTIVE",
+    "QUESTION_SENT",
+    "HOLDING",
+    "ANSWER_RECEIVED",
+    "COMMITTED",
+    "FALLBACK"
+  ],
+  "transitions": [
+    {
+      "fix_gate_id": "F4_T01",
+      "from_state": "NORMAL",
+      "event": "OPEN_AMBIGUITY",
+      "to_state": "AMBIGUITY_ACTIVE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: NORMAL new ambiguity"
+    },
+    {
+      "fix_gate_id": "F4_T02",
+      "from_state": "AMBIGUITY_ACTIVE",
+      "event": "ACT_COMMIT",
+      "to_state": "COMMITTED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: hard-feasible single/equivalent candidates"
+    },
+    {
+      "fix_gate_id": "F4_T03",
+      "from_state": "AMBIGUITY_ACTIVE",
+      "event": "QUESTION_DISPATCHED",
+      "to_state": "QUESTION_SENT",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: critical timely ASK dispatched"
+    },
+    {
+      "fix_gate_id": "F4_T04",
+      "from_state": "AMBIGUITY_ACTIVE",
+      "event": "HOLD_SELECTED",
+      "to_state": "HOLDING",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: known-late pre-question WAIT"
+    },
+    {
+      "fix_gate_id": "F4_T05",
+      "from_state": "QUESTION_SENT",
+      "event": "HOLD_SELECTED",
+      "to_state": "HOLDING",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: unanswered question with feasible holding"
+    },
+    {
+      "fix_gate_id": "F4_T06",
+      "from_state": "QUESTION_SENT",
+      "event": "VALID_ANSWER",
+      "to_state": "ANSWER_RECEIVED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: timely matching answer"
+    },
+    {
+      "fix_gate_id": "F4_T07",
+      "from_state": "HOLDING",
+      "event": "VALID_ANSWER",
+      "to_state": "ANSWER_RECEIVED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: timely answer while holding"
+    },
+    {
+      "fix_gate_id": "F4_T08",
+      "from_state": "HOLDING",
+      "event": "ACT_COMMIT",
+      "to_state": "COMMITTED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: robust ACT while holding"
+    },
+    {
+      "fix_gate_id": "F4_T09",
+      "from_state": "ANSWER_RECEIVED",
+      "event": "ANSWER_REVALIDATED",
+      "to_state": "COMMITTED",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: answer-selected interpretation revalidated"
+    },
+    {
+      "fix_gate_id": "F4_T10",
+      "from_state": "ANSWER_RECEIVED",
+      "event": "NEW_INSTRUCTION",
+      "to_state": "AMBIGUITY_ACTIVE",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: answer changes instruction"
+    },
+    {
+      "fix_gate_id": "F4_T11",
+      "from_state": "FALLBACK",
+      "event": "RECOVER_NORMAL",
+      "to_state": "NORMAL",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: safe recovery to NORMAL"
+    }
+  ],
+  "illegal_transition_cases": [
+    {
+      "fix_gate_id": "F4_ILLEGAL_NORMAL_QUESTION",
+      "from_state": "NORMAL",
+      "event": "QUESTION_DISPATCHED",
+      "expected_behavior": "REJECT",
+      "expected_error_prefix": "ILLEGAL_STATE_TRANSITION",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §2: NORMAL cannot dispatch a clarification question directly"
+    },
+    {
+      "fix_gate_id": "F4_ILLEGAL_COMMITTED_ANSWER",
+      "from_state": "COMMITTED",
+      "event": "VALID_ANSWER",
+      "expected_behavior": "REJECT",
+      "expected_error_prefix": "ILLEGAL_STATE_TRANSITION",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §6–7: late answer cannot alter COMMITTED"
+    }
+  ],
+  "global_fallback_cases": [
+    {
+      "fix_gate_id": "F4_FALLBACK_NORMAL",
+      "from_state": "NORMAL",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_AMBIGUITY_ACTIVE",
+      "from_state": "AMBIGUITY_ACTIVE",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_QUESTION_SENT",
+      "from_state": "QUESTION_SENT",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_HOLDING",
+      "from_state": "HOLDING",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_ANSWER_RECEIVED",
+      "from_state": "ANSWER_RECEIVED",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_COMMITTED",
+      "from_state": "COMMITTED",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    },
+    {
+      "fix_gate_id": "F4_FALLBACK_FALLBACK",
+      "from_state": "FALLBACK",
+      "event": "FALLBACK",
+      "to_state": "FALLBACK",
+      "label_basis": "HAND_AUTHORED_BEFORE_FIX_IMPLEMENTATION",
+      "reviewed_before_execution": true,
+      "contract_reference": "State Machine §3: any state may enter FALLBACK"
+    }
+  ]
+}

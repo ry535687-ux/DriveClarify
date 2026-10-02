@@ -1,0 +1,4 @@
+# 可选绘图依赖；真实案例图还需要 engineering/REPRODUCING.md 所列资产。
+-r paper.txt
+matplotlib==3.10.0
+Pillow==11.1.0

@@ -1,0 +1,14 @@
+{
+  "collision": {
+    "event_observed": false,
+    "coverage_complete": true
+  },
+  "offroad": {
+    "event_observed": false,
+    "coverage_complete": true
+  },
+  "red_light": {
+    "event_observed": false,
+    "coverage_complete": true
+  }
+}

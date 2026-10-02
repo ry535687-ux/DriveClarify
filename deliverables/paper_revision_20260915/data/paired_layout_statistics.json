@@ -1,0 +1,609 @@
+{
+  "unit": "paired layout within split",
+  "repetitions": 20000,
+  "seed": 20260915,
+  "results": [
+    {
+      "split": "DEV",
+      "baseline": "Never Clarify",
+      "metric": "correct",
+      "difference": 0.16666666666666663,
+      "ci95": [
+        0.16666666666666663,
+        0.16666666666666663
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Never Clarify",
+      "metric": "wrong",
+      "difference": -0.16666666666666666,
+      "ci95": [
+        -0.16666666666666666,
+        -0.16666666666666666
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Never Clarify",
+      "metric": "query",
+      "difference": 0.3333333333333333,
+      "ci95": [
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Never Clarify",
+      "metric": "unnecessary",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Never Clarify",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Always Clarify",
+      "metric": "correct",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Always Clarify",
+      "metric": "wrong",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Always Clarify",
+      "metric": "query",
+      "difference": -0.6666666666666667,
+      "ci95": [
+        -0.6666666666666667,
+        -0.6666666666666667
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Always Clarify",
+      "metric": "unnecessary",
+      "difference": -1.0,
+      "ci95": [
+        -1.0,
+        -1.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Always Clarify",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Ambiguity-Only",
+      "metric": "correct",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Ambiguity-Only",
+      "metric": "wrong",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Ambiguity-Only",
+      "metric": "query",
+      "difference": -0.6666666666666667,
+      "ci95": [
+        -0.6666666666666667,
+        -0.6666666666666667
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Ambiguity-Only",
+      "metric": "unnecessary",
+      "difference": -1.0,
+      "ci95": [
+        -1.0,
+        -1.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Ambiguity-Only",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Trajectory-Distance",
+      "metric": "correct",
+      "difference": 0.14583333333333331,
+      "ci95": [
+        0.11458333333333334,
+        0.16666666666666663
+      ],
+      "n_clusters": 8,
+      "zero_width": false
+    },
+    {
+      "split": "DEV",
+      "baseline": "Trajectory-Distance",
+      "metric": "wrong",
+      "difference": -0.14583333333333331,
+      "ci95": [
+        -0.16666666666666666,
+        -0.11458333333333333
+      ],
+      "n_clusters": 8,
+      "zero_width": false
+    },
+    {
+      "split": "DEV",
+      "baseline": "Trajectory-Distance",
+      "metric": "query",
+      "difference": 0.2708333333333333,
+      "ci95": [
+        0.1875,
+        0.3333333333333333
+      ],
+      "n_clusters": 8,
+      "zero_width": false
+    },
+    {
+      "split": "DEV",
+      "baseline": "Trajectory-Distance",
+      "metric": "unnecessary",
+      "difference": -0.03125,
+      "ci95": [
+        -0.09375,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": false
+    },
+    {
+      "split": "DEV",
+      "baseline": "Trajectory-Distance",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "correct",
+      "difference": 0.11111111111111116,
+      "ci95": [
+        0.11111111111111116,
+        0.11111111111111116
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "wrong",
+      "difference": -0.11111111111111112,
+      "ci95": [
+        -0.11111111111111112,
+        -0.11111111111111112
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "query",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "unnecessary",
+      "difference": -0.3333333333333333,
+      "ci95": [
+        -0.3333333333333333,
+        -0.3333333333333333
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "DEV",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 8,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Never Clarify",
+      "metric": "correct",
+      "difference": 0.16666666666666657,
+      "ci95": [
+        0.16666666666666657,
+        0.16666666666666657
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Never Clarify",
+      "metric": "wrong",
+      "difference": -0.16666666666666666,
+      "ci95": [
+        -0.16666666666666666,
+        -0.16666666666666666
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Never Clarify",
+      "metric": "query",
+      "difference": 0.3333333333333333,
+      "ci95": [
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Never Clarify",
+      "metric": "unnecessary",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Never Clarify",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Always Clarify",
+      "metric": "correct",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Always Clarify",
+      "metric": "wrong",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Always Clarify",
+      "metric": "query",
+      "difference": -0.6666666666666667,
+      "ci95": [
+        -0.6666666666666667,
+        -0.6666666666666667
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Always Clarify",
+      "metric": "unnecessary",
+      "difference": -1.0,
+      "ci95": [
+        -1.0,
+        -1.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Always Clarify",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Ambiguity-Only",
+      "metric": "correct",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Ambiguity-Only",
+      "metric": "wrong",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Ambiguity-Only",
+      "metric": "query",
+      "difference": -0.6666666666666667,
+      "ci95": [
+        -0.6666666666666667,
+        -0.6666666666666667
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Ambiguity-Only",
+      "metric": "unnecessary",
+      "difference": -1.0,
+      "ci95": [
+        -1.0,
+        -1.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Ambiguity-Only",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Trajectory-Distance",
+      "metric": "correct",
+      "difference": 0.12499999999999997,
+      "ci95": [
+        0.08928571428571429,
+        0.15476190476190468
+      ],
+      "n_clusters": 14,
+      "zero_width": false
+    },
+    {
+      "split": "HIST",
+      "baseline": "Trajectory-Distance",
+      "metric": "wrong",
+      "difference": -0.12500000000000003,
+      "ci95": [
+        -0.15476190476190474,
+        -0.08928571428571429
+      ],
+      "n_clusters": 14,
+      "zero_width": false
+    },
+    {
+      "split": "HIST",
+      "baseline": "Trajectory-Distance",
+      "metric": "query",
+      "difference": 0.08333333333333333,
+      "ci95": [
+        -0.07142857142857144,
+        0.21428571428571422
+      ],
+      "n_clusters": 14,
+      "zero_width": false
+    },
+    {
+      "split": "HIST",
+      "baseline": "Trajectory-Distance",
+      "metric": "unnecessary",
+      "difference": -0.25,
+      "ci95": [
+        -0.42857142857142855,
+        -0.08928571428571429
+      ],
+      "n_clusters": 14,
+      "zero_width": false
+    },
+    {
+      "split": "HIST",
+      "baseline": "Trajectory-Distance",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "correct",
+      "difference": 0.11111111111111116,
+      "ci95": [
+        0.11111111111111116,
+        0.11111111111111116
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "wrong",
+      "difference": -0.11111111111111113,
+      "ci95": [
+        -0.11111111111111113,
+        -0.11111111111111113
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "query",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "unnecessary",
+      "difference": -0.3333333333333333,
+      "ci95": [
+        -0.3333333333333333,
+        -0.3333333333333333
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    },
+    {
+      "split": "HIST",
+      "baseline": "Random-Query@matched-rate",
+      "metric": "coverage",
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 14,
+      "zero_width": true
+    }
+  ],
+  "mcnemar_correctness": null,
+  "reason": "Weighted counterfactual intentions and repeated layouts are not independent binary records."
+}

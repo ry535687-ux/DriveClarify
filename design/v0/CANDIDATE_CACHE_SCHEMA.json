@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://driveclarify.local/schema/v0.1/candidate-cache.schema.json",
+  "title": "DriveClarify v0.1 Candidate Cache 记录",
+  "description": "双速率设计中的候选生命周期记录。只有未过期且 validity_status=VALID 的 cache 可以进入执行门。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "cache_id",
+    "episode_id",
+    "source_observation_id",
+    "generated_at_monotonic_s",
+    "generated_at_sim_time_s",
+    "valid_until_monotonic_s",
+    "plan_age_s",
+    "refresh_reason",
+    "refresh_requested",
+    "candidate_ids",
+    "validity_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "driveclarify.candidate_cache.v0.1"
+    },
+    "cache_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Candidate Cache 的唯一标识；consequence record 必须通过该 ID 关联。"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "生成该 cache 的 clarification episode。"
+    },
+    "source_observation_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "slow loop 冻结且由全部候选共享的观测标识。"
+    },
+    "generated_at_monotonic_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "cache 完成生成时的单调 wall-clock 时间。"
+    },
+    "generated_at_sim_time_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "来源观测对应的仿真时间；不能替代 wall-clock age。"
+    },
+    "valid_until_monotonic_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "严格执行截止时间；current_time 等于该值时已经过期。真实阈值仍为 TBD_REQUIRED。"
+    },
+    "plan_age_s": {
+      "type": "number",
+      "minimum": 0,
+      "description": "派生值 current_monotonic_time - generated_at_monotonic_s。"
+    },
+    "refresh_reason": {
+      "enum": [
+        "EPISODE_OPEN",
+        "ANSWER_RECEIVED",
+        "CANDIDATE_EXPIRED",
+        "MATERIAL_SCENE_CHANGE",
+        "PLAN_INVALIDATED",
+        "MANUAL_TEST_REFRESH"
+      ]
+    },
+    "refresh_requested": {
+      "type": "boolean",
+      "description": "fast loop 是否已请求一次新的 slow-loop refresh。"
+    },
+    "candidate_ids": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "校验后保存在该 cache 中的候选 ID；核心 v0 最多为 2，K=3 仅用于扩展敏感性。"
+    },
+    "validity_status": {
+      "enum": ["VALID", "EXPIRED", "INVALIDATED", "UNKNOWN"],
+      "description": "只有 VALID 可执行；UNKNOWN 必须保留并触发 reason-coded fallback。"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "validity_status": {"const": "VALID"}
+        },
+        "required": ["validity_status"]
+      },
+      "then": {
+        "properties": {
+          "candidate_ids": {"minItems": 1}
+        }
+      }
+    }
+  ],
+  "x-derived-invariant": "plan_age_s = current_monotonic_time - generated_at_monotonic_s",
+  "x-generation-invariant": "valid_until_monotonic_s 必须严格晚于 generated_at_monotonic_s；跨字段比较由 evaluator 显式验证。",
+  "x-execution-invariant": "current_monotonic_time < valid_until_monotonic_s AND validity_status == VALID",
+  "x-unknown-policy": "UNKNOWN 不转换成 EXPIRED 或 INVALIDATED；输出 UNKNOWN_CACHE_VALIDITY fallback。",
+  "x-threshold-policy": "真实 valid_until 仍为 TBD_REQUIRED；offline fixture 必须标记 SYNTHETIC_TEST_ONLY。"
+}

@@ -1,0 +1,342 @@
+{
+  "source": "reports/driveclarify_rq3_paired_comparison_v2_task_binding_qualification_and_execution/ALL_36_PAIRED_RESULTS.csv",
+  "source_sha256": "50c6ed93241c39ba49b83593c6561aac4e5bed2a2719f159630a137d87ab2d86",
+  "scope": "Historical local-stop paired task; no new branch experiment",
+  "results": [
+    {
+      "population": "HIGH",
+      "metric": "TCSC",
+      "n_pairs": 24,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.14247359772252563,
+        0.14247359772252563
+      ]
+    },
+    {
+      "population": "HIGH",
+      "metric": "correct_goal",
+      "n_pairs": 24,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.14247359772252563,
+        0.14247359772252563
+      ]
+    },
+    {
+      "population": "HIGH",
+      "metric": "wrong_goal",
+      "n_pairs": 24,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.14247359772252563,
+        0.14247359772252563
+      ]
+    },
+    {
+      "population": "HIGH",
+      "metric": "native_completion",
+      "n_pairs": 24,
+      "A0_mean": 1.0,
+      "A1_mean": 1.0,
+      "A0_sum": 24.0,
+      "A1_sum": 24.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.14247359772252563,
+        0.14247359772252563
+      ]
+    },
+    {
+      "population": "HIGH",
+      "metric": "collision",
+      "n_pairs": 24,
+      "A0_mean": 1.0,
+      "A1_mean": 0.9583333333333334,
+      "A0_sum": 24.0,
+      "A1_sum": 23.0,
+      "difference": -0.041666666666666664,
+      "ci95": [
+        -0.125,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": false,
+      "n01": 0,
+      "n10": 1,
+      "exact_mcnemar_p": 1.0
+    },
+    {
+      "population": "HIGH",
+      "metric": "ASK_count",
+      "n_pairs": 24,
+      "A0_mean": 0.0,
+      "A1_mean": 1.0,
+      "A0_sum": 0.0,
+      "A1_sum": 24.0,
+      "difference": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 24,
+      "n10": 0,
+      "exact_mcnemar_p": 1.1920928955078125e-07
+    },
+    {
+      "population": "HIGH",
+      "metric": "Full_Replan_committed",
+      "n_pairs": 24,
+      "A0_mean": 0.0,
+      "A1_mean": 1.0,
+      "A0_sum": 0.0,
+      "A1_sum": 24.0,
+      "difference": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true,
+      "n01": 24,
+      "n10": 0,
+      "exact_mcnemar_p": 1.1920928955078125e-07
+    },
+    {
+      "population": "HIGH",
+      "metric": "Route_Completion",
+      "n_pairs": 24,
+      "A0_mean": 100.0,
+      "A1_mean": 100.0,
+      "A0_sum": 2400.0,
+      "A1_sum": 2400.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 24,
+      "zero_width": true
+    },
+    {
+      "population": "LOW",
+      "metric": "TCSC",
+      "n_pairs": 11,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.2849141529181544,
+        0.2849141529181544
+      ]
+    },
+    {
+      "population": "LOW",
+      "metric": "correct_goal",
+      "n_pairs": 11,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.2849141529181544,
+        0.2849141529181544
+      ]
+    },
+    {
+      "population": "LOW",
+      "metric": "wrong_goal",
+      "n_pairs": 11,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.2849141529181544,
+        0.2849141529181544
+      ]
+    },
+    {
+      "population": "LOW",
+      "metric": "native_completion",
+      "n_pairs": 11,
+      "A0_mean": 1.0,
+      "A1_mean": 0.9090909090909091,
+      "A0_sum": 11.0,
+      "A1_sum": 10.0,
+      "difference": -0.09090909090909091,
+      "ci95": [
+        -0.2727272727272727,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": false,
+      "n01": 0,
+      "n10": 1,
+      "exact_mcnemar_p": 1.0
+    },
+    {
+      "population": "LOW",
+      "metric": "collision",
+      "n_pairs": 11,
+      "A0_mean": 1.0,
+      "A1_mean": 1.0,
+      "A0_sum": 11.0,
+      "A1_sum": 11.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.2849141529181544,
+        0.2849141529181544
+      ]
+    },
+    {
+      "population": "LOW",
+      "metric": "ASK_count",
+      "n_pairs": 11,
+      "A0_mean": 0.0,
+      "A1_mean": 0.0,
+      "A0_sum": 0.0,
+      "A1_sum": 0.0,
+      "difference": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 0,
+      "n10": 0,
+      "exact_mcnemar_p": 1.0,
+      "conservative_discordance_ci95": [
+        -0.2849141529181544,
+        0.2849141529181544
+      ]
+    },
+    {
+      "population": "LOW",
+      "metric": "Full_Replan_committed",
+      "n_pairs": 11,
+      "A0_mean": 0.0,
+      "A1_mean": 1.0,
+      "A0_sum": 0.0,
+      "A1_sum": 11.0,
+      "difference": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "n_clusters": 11,
+      "zero_width": true,
+      "n01": 11,
+      "n10": 0,
+      "exact_mcnemar_p": 0.0009765625
+    },
+    {
+      "population": "LOW",
+      "metric": "Route_Completion",
+      "n_pairs": 11,
+      "A0_mean": 100.0,
+      "A1_mean": 96.10454545454546,
+      "A0_sum": 1100.0,
+      "A1_sum": 1057.15,
+      "difference": -3.8954545454545455,
+      "ci95": [
+        -11.686363636363637,
+        0.0
+      ],
+      "n_clusters": 11,
+      "zero_width": false
+    }
+  ],
+  "interpretation": "Neither arm completed the local goal; no evidence of task-outcome benefit."
+}

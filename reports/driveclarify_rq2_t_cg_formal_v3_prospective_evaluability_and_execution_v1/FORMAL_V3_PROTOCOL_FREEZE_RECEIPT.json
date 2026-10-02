@@ -1,0 +1,264 @@
+{
+  "B1_B2_contract_digest": "6297a2072996385275c3549c2dcbae522ed373a32afa00c0bb901d8b96139a6b",
+  "H_CG_definitions": {
+    "HCG1": "Within REF-ASYNC, LMK-ASYNC, and ORD-ASYNC, B2 improves truthful precommitment sufficiency and actionable-window presence relative to B1.",
+    "HCG2": "Within REF-SYNC and LMK-SYNC, any B2-only advantage is reported solely as a manipulation-control result; no equivalence claim is allowed without a frozen margin.",
+    "HCG3": "On identical traces and within separately reported timing-condition strata, R-JOINT avoids the evidence-only late trigger and time-only premature trigger constructed by the frozen timing conditions.",
+    "HCG4": "In NONREVEAL and USC-INTRINSIC, B2 creates neither false sufficiency, fabricated semantic resolution, nor invalid retention."
+  },
+  "analysis_plan": {
+    "async_positive_scene_codes": [
+      "REF-ASYNC",
+      "LMK-ASYNC",
+      "ORD-ASYNC"
+    ],
+    "co_primary_endpoints": [
+      "precommitment_sufficiency",
+      "actionable_window_presence"
+    ],
+    "complete_scene_sensitivity": "restrict to 6/6-evaluable scene families and recompute direction of pooled ASYNC precommitment-sufficiency B2-B1 effect",
+    "confidence_interval": "95% exhaustive shared-seed cluster bootstrap percentile interval over evaluable paired episodes",
+    "continuous_descriptives": [
+      "first-sufficiency TTCmt",
+      "actionable-window duration"
+    ],
+    "h_cg1_supported_if": "both pooled ASYNC paired B2-B1 effects are positive and both Holm-adjusted p values < 0.05",
+    "h_cg2": "descriptive SYNC memory-placebo comparison; no equivalence claim",
+    "h_cg3": "offline same-trace R-EVIDENCE-ONLY, R-TIME-ONLY, R-JOINT classifications",
+    "h_cg4": "eligible negative-control exact event counts and Clopper-Pearson bounds",
+    "missing_native_noncompletion_imputed": false,
+    "paired_test": "two-sided exact McNemar per co-primary endpoint with Holm adjustment",
+    "primary_population": "PRIMARY-EVALUABLE episodes only",
+    "primary_unit": "scene x shared-seed episode",
+    "scene_family_superiority_not_individually_required": true,
+    "sync_control_scene_codes": [
+      "REF-SYNC",
+      "LMK-SYNC"
+    ],
+    "v2_analysis_plan_preserved_reference_digest": "5034a1e023529c8f43d5eadf8473663b5429bd032dc9ba9c9ee0d00d61e7aefc"
+  },
+  "background_traffic_policy_sha256": "0d5ae45ad68e82f25851d527c27fdd3c16a45215503ed45277350c4a0d0bf916",
+  "calibration_freeze_digest": "94a933897ded5c6d48df35020e79373db04a362c89d6338b78e10677f556d371",
+  "checkpoint_sha256": "ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28",
+  "checks": {
+    "admission_pass": true,
+    "calibration_exact": true,
+    "checkpoint_exact": true,
+    "eight_scene_contracts_exact_v2": true,
+    "formal_exposures_zero_before_freeze": true,
+    "formal_seeds_zero_before_freeze": true,
+    "frozen_science_sources_exact": true,
+    "no_runtime_optimization": true,
+    "startup_audit_exactly_one": true,
+    "v2_permanently_excluded": true
+  },
+  "commitment_deadline_digest": "35e3fd3c8f48c7b8174c54633d810a0adb97f28c2586c5a11deb827161abc3d4",
+  "decision_rules_digest": "2066f70cb1c2a7e08042ed08f1559f6e01ab08b61bf2c388598cb7282c0ff0a2",
+  "eight_scene_contracts": {
+    "LMK-ASYNC": {
+      "formal_scene_digest": "42cd4db03ffbeb3b20558bf10f052c3dc9a81b3f8d58388239ffc0215b9c102d",
+      "native_route_sha256": "17c9eae36f94b713b2d78d96126d9a99562f41b6302cef8dea9d04cb8d748691",
+      "scene_file_sha256": "8311fbecf7a8b0f6ca93bfbdd8928117c43c6dd5dfb26038be8a5eb1bd04884c"
+    },
+    "LMK-SYNC": {
+      "formal_scene_digest": "db28175a759ccf399ad4219d94e7e9bc541afe7c71dae346ee98f475460ddee9",
+      "native_route_sha256": "acfb26b0f9bb9025f19aec7cc3c8593aea8bc8fc28c11f229aa3d50e9a4bd73b",
+      "scene_file_sha256": "312b6e32ece97f98c15e3182c375a6073c40f49d11d1eab7faf73631e0d6c340"
+    },
+    "NONREVEAL": {
+      "formal_scene_digest": "e6a1d55acbb9882b057e681b4d845b9579e344397d3ad7fbf7d8ce89d4e61ecb",
+      "native_route_sha256": "26992ea34567d69fdb444a3fe405cc9d2f98afcea083ee6ef3cb36948f7989a7",
+      "scene_file_sha256": "636190124cd7e617bf43e4ffa6bbe361e01e93ad91999c0b6ae1a6f8cfe139f7"
+    },
+    "ORD-ASYNC": {
+      "formal_scene_digest": "4756392cc48b2a1c1d29309c0115162285b511dd9c8125a2c308effd1c3456bf",
+      "native_route_sha256": "622345e38a0f350351321cbe4a178f96a7ac7f6b2282a8bb412e1bfc286eb51b",
+      "scene_file_sha256": "2fcd28d60665a7fbdad73cb2a5d423bc0594e1d1852ec742cb1dc7a45e2f08b8"
+    },
+    "ORD-LATE-REVEAL": {
+      "formal_scene_digest": "b74fe650c0ca48ad113f00f55c510eff30064fbc05087aba3168fcdbc7de91ea",
+      "native_route_sha256": "063577f987816c0469fb7c62398f92f91849f9f9ad866cf7c0ccbabf22542a69",
+      "scene_file_sha256": "8ec78ed28d2d4c35ff98965cce128f481ef4d8d76d48039e521f507003ac5801"
+    },
+    "REF-ASYNC": {
+      "formal_scene_digest": "52f18b32ce66f77eb6e99cf8e53ba1e7fffbab77b931b491f5aefb0147950b26",
+      "native_route_sha256": "78929fe6505567a6e8d5985774e94e176ab8a02f154111f51d045ad28fea96b7",
+      "scene_file_sha256": "1b9c060f3b0767bf704ea3123cf7f1020576c98c8583c65f1c35e6ccb10aa351"
+    },
+    "REF-SYNC": {
+      "formal_scene_digest": "6ac9359ec6a9e5721f3f02e943c48c323cb050477a7554856d521f01d59a366b",
+      "native_route_sha256": "180ff8e31646c03973584254e5acb9b73b7059ecee678ef810f6e2d2726b07f6",
+      "scene_file_sha256": "81384f1ee23df639e8dd8437307b8b0a87968c25eff7b219536ba7647044bbad"
+    },
+    "USC-INTRINSIC": {
+      "formal_scene_digest": "8bedf9dcc8636a8a07f9688e8759b76367474db0939e6e9ee8f7b714a79b924a",
+      "native_route_sha256": "394cf1ff5a13ffd263c608262e3e1094ccaf42df4b8af88230b06496a9059b25",
+      "scene_file_sha256": "219e11da1527e8fe8158e3338fd90e790b191b2fa730f571641cb1f3662bcd26"
+    }
+  },
+  "evaluability_contract": {
+    "estimand": "Among prospectively eligible native traces reaching the frozen scientific observation endpoint, does B2 temporal retention improve evidence sufficiency/actionable-window availability relative to B1?",
+    "evaluability_reads_b1_b2_outcome": false,
+    "frame_rows_are_independent_scientific_n": false,
+    "noncompletion_is_not_b1_or_b2_outcome": true,
+    "per_scene_planned": 6,
+    "per_scene_primary_evaluable_minimum": 5,
+    "planned_cells": 48,
+    "primary_evaluable_requires": [
+      "required evidence/event observation interval",
+      "commitment and frozen natural scientific endpoint",
+      "complete paired B1/B2 builder output",
+      "complete source-frame identity",
+      "complete actionability/deadline information",
+      "no integrity corruption"
+    ],
+    "replacement_seeds": 0,
+    "scientific_retries": 0,
+    "total_primary_evaluable_minimum": 40,
+    "zero_exposure_infrastructure_retries_permitted": 0
+  },
+  "evidence_contract_digest": "065edc6b3acd97646aa8febfb0fb61a238334174b807d4d73f5a29582ae383e2",
+  "failed_checks": [],
+  "formal_scientific_exposures_at_freeze": 0,
+  "formal_seed_values_generated_at_freeze": 0,
+  "freeze_digest": "113843acf014be1db402b78f5618a92a0e5505a35d20079806c879080e4d17d3",
+  "retry_policy": {
+    "scientific_retries": 0,
+    "seed_substitution_count": 0,
+    "zero_exposure_infrastructure_retries": 0
+  },
+  "schema_version": "driveclarify.rq2_t_cg.formal_v3.protocol_freeze.v1",
+  "scientific_protocol_changes_after_freeze_allowed": 0,
+  "source_checkpoint_identity": {
+    "PID_controller_changes": 0,
+    "calibration_freeze_digest": "94a933897ded5c6d48df35020e79373db04a362c89d6338b78e10677f556d371",
+    "checkpoint_changes": 0,
+    "checkpoint_sha256": "ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28",
+    "checkpoint_unchanged": true,
+    "external_file_count": 4,
+    "external_files": [
+      {
+        "bytes": 51211,
+        "path": "/home/buaa/wrh/simlingo/team_code/driveclarify_probe_hook.py",
+        "sha256": "fc951bdffb981f321e2c951d2ec2448a66503e03e5b1393bf2f1b32b27abd84c"
+      },
+      {
+        "bytes": 38213,
+        "path": "/home/buaa/wrh/simlingo/team_code/nav_planner.py",
+        "sha256": "34b266b43e227aa5a56425a1465b1ffc1e3f445649e7488a6560ba08842d67ea"
+      },
+      {
+        "bytes": 53455,
+        "path": "/home/buaa/wrh/simlingo/team_code/agent_simlingo.py",
+        "sha256": "863e60ee19906ed58d3a9afff898b1c65426676cada8b722904ed65f4e2c3db8"
+      },
+      {
+        "bytes": 23915,
+        "path": "/home/buaa/wrh/simlingo/Bench2Drive/leaderboard/leaderboard/scenarios/route_scenario.py",
+        "sha256": "01773b878eb6f0c647661ae34c570f26aac177eff6dc8928fb1e467621a8f7f1"
+      }
+    ],
+    "file_count": 17,
+    "files": [
+      {
+        "bytes": 37111,
+        "path": "driveclarify_rq2_t/measurement.py",
+        "sha256": "65aa232980465f89d50b3fd1a561925bc591f9417c45b50a679668fd7da89268"
+      },
+      {
+        "bytes": 4064,
+        "path": "driveclarify_rq2_t_cg/contracts.py",
+        "sha256": "8ee59c5626629476460974835e2090be4cd5bf6d529d2e7057db61cbbc6eba44"
+      },
+      {
+        "bytes": 12599,
+        "path": "driveclarify_rq2_t_cg/interface.py",
+        "sha256": "f6d57af20fa7d1a2e7bc6b6e424d07f9e21789c847d46ff4e4ca1abec31ffe70"
+      },
+      {
+        "bytes": 2393,
+        "path": "driveclarify_rq2_t_cg/memory.py",
+        "sha256": "30ed66ff7aee60f64e58007704e8e59a7f11955d9245f2eb0d10418f195c143f"
+      },
+      {
+        "bytes": 5633,
+        "path": "driveclarify_rq2_t_cg/rules.py",
+        "sha256": "0bf8c604af38b880fb0fae2ae572b3f4f2203fb84e212521558a529aac360daf"
+      },
+      {
+        "bytes": 12480,
+        "path": "driveclarify_rq2_t_cg_formal_execution/builder.py",
+        "sha256": "20f3891897df4041d4288e4fe06613d82243920e06823bf8fe45a1cb24f7c672"
+      },
+      {
+        "bytes": 11658,
+        "path": "driveclarify_rq2_t_cg_formal_execution/child_admission_v2.py",
+        "sha256": "573f33ba50443f649b2fb3d5d9284eb2307578c87fe405be0a938c09cf2c85fc"
+      },
+      {
+        "bytes": 13574,
+        "path": "driveclarify_rq2_t_cg_formal_execution/native_scenario.py",
+        "sha256": "fea8552bcdc35f3c2a91e28c220460d2bd1807a262e0eabb9ccd354a340a5706"
+      },
+      {
+        "bytes": 6083,
+        "path": "driveclarify_rq2_t_cg_formal_execution/route_binding_v2.py",
+        "sha256": "b4826f7630bef8945ce0c3f5e3b7f905976826bb2bfae1616f2795bb40f7f135"
+      },
+      {
+        "bytes": 7477,
+        "path": "driveclarify_rq2_t_cg_formal_execution/routes.py",
+        "sha256": "9236d9697451226c1b32d473a7b00a84f3ca52f920606686e3b01997e5cb1019"
+      },
+      {
+        "bytes": 3245,
+        "path": "driveclarify_rq2_t_cg_formal_execution/scene_io.py",
+        "sha256": "c96ddd278b6692bb1777bf6c41e2be8386b0c1b2dc8aa5bf1a24f1e66901a341"
+      },
+      {
+        "bytes": 9818,
+        "path": "driveclarify_rq2_t_cg_background_traffic/policy.py",
+        "sha256": "6034f15caa34e7c1dc3eb590e90e35c433f1cdfac93c62383f33c143098a5505"
+      },
+      {
+        "bytes": 12345,
+        "path": "driveclarify_rq2_t_cg_v2_calibration/scenes.py",
+        "sha256": "8a35820f242b4ada4cdfc6a30ac97312e31208551f139efef62386360e18f5c7"
+      },
+      {
+        "bytes": 511,
+        "path": "driveclarify_rq2_t_cg_formal_v3/__init__.py",
+        "sha256": "a3dcdc3d59d4db075256da85d055586ae97752897e8a2663e622f7f9263fead5"
+      },
+      {
+        "bytes": 9102,
+        "path": "driveclarify_rq2_t_cg_formal_v3/evaluability.py",
+        "sha256": "87eb4b01b2c0794e17e4155da362088a7be7108b97d5d40d6cf6c758f46c16b0"
+      },
+      {
+        "bytes": 5808,
+        "path": "tests/rq2_t_cg_formal_v3/test_evaluability.py",
+        "sha256": "dbf595e59c213b65f02104dac7a3a4208797b7b0d8ee13e1a993d3eeeefa61ae"
+      },
+      {
+        "bytes": 80471,
+        "path": "tools/run_rq2_t_cg_formal_v3.py",
+        "sha256": "a0bb26bde8ee7510e0b7f889ad633b7fcf0877f513bd5442656b08aa0148596d"
+      }
+    ],
+    "pass": true,
+    "receipt_digest": "9ef8870d80a98fa490e6b8aeb6811387f550e493aec81eec54b59512106b8f56",
+    "schema_version": "driveclarify.rq2_t_cg.formal_v3.source_freeze.v1",
+    "scientific_mechanism_mutations": [],
+    "source_mutations_after_v2": [
+      "driveclarify_rq2_t_cg_formal_v3/evaluability.py",
+      "tools/run_rq2_t_cg_formal_v3.py",
+      "tests/rq2_t_cg_formal_v3/test_evaluability.py"
+    ],
+    "v2_final_source_freeze_digest": "34298831f81d732f868b7b2a4ee32623ea279cea2e3aa0a22b41ae9a39ff55ff",
+    "v2_science_source_hashes_unchanged": true
+  },
+  "source_freeze_digest": "9ef8870d80a98fa490e6b8aeb6811387f550e493aec81eec54b59512106b8f56",
+  "status": "PASS_FORMAL_V3_PROTOCOL_FROZEN",
+  "v2_final_freeze_digest": "a4b184880589265ccf342da99316650af19263305f233d11bc040683fb213a0a"
+}

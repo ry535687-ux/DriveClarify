@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://driveclarify.local/schema/cp2/consequence_adapter_input_v0.schema.json",
+  "title": "ConsequenceAdapterInputV0",
+  "description": "Frozen canonical input to the Consequence Adapter (CP2 design freeze). READ-ONLY view assembled offline (replay) or in live shadow from the SAME single forward. Raw model fields are carried verbatim (never silently transformed). Every clock field names its domain. Missing != zero; empty/UNKNOWN/UNSUPPORTED/EXCEPTION are distinct. No adapter field authorizes control.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata", "clock_bundle", "ego_state", "world_state", "candidate_plans", "contract_snapshot"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "run_id", "record_seq", "observation_id", "candidate_set_id", "generated_at_monotonic_ns", "source_sim_frame", "source_snapshot_frame"],
+      "properties": {
+        "schema_version": {"const": "driveclarify.consequence_adapter_input.v0"},
+        "run_id": {"type": "string", "minLength": 1, "description": "Run identifier. NOTE errata E2: raw t3 equivalence file mislabels run_id; consumers correct cp1_enalbed->cp1_t3 for that file only."},
+        "record_seq": {"type": "integer", "minimum": 0, "description": "Monotonic per-run record index."},
+        "observation_id": {"type": "string", "minLength": 1, "description": "Shared observation key; ALL candidates in candidate_plans MUST bind to this exact id."},
+        "candidate_set_id": {"type": "string", "minLength": 1, "description": "Identifier for the candidate set evaluated together at this observation."},
+        "generated_at_monotonic_ns": {"type": "integer", "minimum": 0, "description": "time.monotonic_ns() when this input record was assembled. MONOTONIC domain only."},
+        "source_sim_frame": {"type": "integer", "description": "GameTime.get_frame() sim frame (reference sim source)."},
+        "source_snapshot_frame": {"type": "integer", "description": "world.get_snapshot().timestamp.frame (primary sim source, world-state-aligned)."}
+      }
+    },
+    "clock_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_elapsed_seconds", "gametime_elapsed_seconds", "monotonic_ns", "clock_policy", "observed_sim_offset_seconds"],
+      "properties": {
+        "snapshot_elapsed_seconds": {"type": ["number", "null"], "description": "SIM domain, PRIMARY. world.get_snapshot().timestamp.elapsed_seconds."},
+        "gametime_elapsed_seconds": {"type": ["number", "null"], "description": "SIM domain, REFERENCE. GameTime.get_time(). NOT interchangeable with snapshot_elapsed_seconds."},
+        "monotonic_ns": {"type": ["integer", "null"], "description": "MONOTONIC domain. Latency/timeout/deadline only. Never subtracted from a SIM field."},
+        "clock_policy": {"const": "driveclarify.time_policy.v0", "description": "Binds this record to TIME_POLICY_V0."},
+        "observed_sim_offset_seconds": {"type": ["number", "null"], "description": "snapshot_elapsed - gametime_elapsed as OBSERVED (CP1: constant 0.900). RECORDED, never auto-subtracted."}
+      }
+    },
+    "ego_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["availability", "source_frame"],
+      "properties": {
+        "availability": {"enum": ["SUCCESS_NONEMPTY", "SUCCESS_EMPTY", "UNKNOWN_WITH_REASON", "UNSUPPORTED", "EXCEPTION", "STALE", "MISSING"]},
+        "source_frame": {"enum": ["CARLA_WORLD", "UNKNOWN"], "description": "Ego transform/velocity are CARLA world frame per CP1 D1."},
+        "world_transform_4x4": {"type": ["array", "null"], "items": {"type": "array", "items": {"type": "number"}}},
+        "location_xyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "rotation_rpy_deg": {"type": ["array", "null"], "items": {"type": "number"}},
+        "velocity_world_mps_xyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "acceleration_world_mps2_xyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "angular_velocity_degps_xyz": {"type": ["array", "null"], "items": {"type": "number"}},
+        "bounding_box": {"type": ["object", "null"]}
+      }
+    },
+    "world_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_frame", "query_status", "actors", "traffic_lights", "map_waypoint", "route_context", "camera_calibration"],
+      "properties": {
+        "source_frame": {"enum": ["CARLA_WORLD", "UNKNOWN"]},
+        "query_status": {"enum": ["SUCCESS_NONEMPTY", "SUCCESS_EMPTY", "UNKNOWN_WITH_REASON", "UNSUPPORTED", "EXCEPTION", "STALE", "MISSING"]},
+        "actors": {"$ref": "#/$defs/queried_collection"},
+        "traffic_lights": {"$ref": "#/$defs/queried_collection"},
+        "map_waypoint": {"$ref": "#/$defs/queried_object"},
+        "route_context": {"$ref": "#/$defs/queried_collection"},
+        "camera_calibration": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["availability", "direction_label"],
+          "properties": {
+            "availability": {"enum": ["SUCCESS_NONEMPTY", "SUCCESS_EMPTY", "UNKNOWN_WITH_REASON", "UNSUPPORTED", "EXCEPTION", "STALE", "MISSING"]},
+            "K_3x3": {"type": ["array", "null"]},
+            "extrinsics_4x4": {"type": ["array", "null"]},
+            "direction_label": {"const": "UNRESOLVED_REQUIRES_F6", "description": "F6 unresolved: extrinsic DIRECTION not established; projection MUST NOT be treated as valid."}
+          }
+        }
+      }
+    },
+    "candidate_plans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "interpretation_id", "source_observation_id", "tensor_shape", "original_dtype", "source_forward_id", "validity", "stale_after"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "interpretation_id": {"type": "string", "minLength": 1},
+          "source_observation_id": {"type": "string", "minLength": 1, "description": "MUST equal metadata.observation_id or record is INVALID (mismatched-observation gate)."},
+          "pred_route_raw": {"type": ["array", "null"], "description": "MODEL_LOCAL_RAW. Verbatim pred_route values [B][N][2]. NOT world/ego/metre."},
+          "pred_speed_wps_raw": {"type": ["array", "null"], "description": "MODEL_LOCAL_RAW. Verbatim pred_speed_wps [B][10][2] — 2D POSITION points, NOT scalar speeds (CP1 F3)."},
+          "tensor_shape": {"type": ["array", "null"], "items": {"type": "integer"}},
+          "original_dtype": {"type": ["string", "null"]},
+          "source_forward_id": {"type": ["string", "null"], "description": "Identifies the single forward that produced this; must match across all fields (no second forward)."},
+          "validity": {"enum": ["VALID", "INVALID_SHAPE", "INVALID_LINKAGE", "STALE", "UNKNOWN"]},
+          "stale_after": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["basis", "value"],
+            "properties": {
+              "basis": {"enum": ["SNAPSHOT_FRAME", "MONOTONIC_NS", "UNKNOWN"]},
+              "value": {"type": ["integer", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "contract_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Frozen CP1 evidence grades as-of this record. Consumed by the dependency gate. Uses CP1 evidence_grade (corrected E4/E5 readings), NOT proposed_confidence.",
+      "required": ["F1_grade", "F2_grade", "F3_grade", "F4_grade", "F5_grade", "F6_grade", "T1_grade", "T2_grade", "T3_grade", "T4_grade", "D1_grade"],
+      "properties": {
+        "F1_grade": {"$ref": "#/$defs/evidence_grade"},
+        "F2_grade": {"$ref": "#/$defs/evidence_grade"},
+        "F3_grade": {"$ref": "#/$defs/evidence_grade"},
+        "F4_grade": {"$ref": "#/$defs/evidence_grade"},
+        "F5_grade": {"$ref": "#/$defs/evidence_grade"},
+        "F6_grade": {"$ref": "#/$defs/evidence_grade"},
+        "T1_grade": {"$ref": "#/$defs/evidence_grade"},
+        "T2_grade": {"$ref": "#/$defs/evidence_grade"},
+        "T3_grade": {"$ref": "#/$defs/evidence_grade"},
+        "T4_grade": {"$ref": "#/$defs/evidence_grade"},
+        "D1_grade": {"$ref": "#/$defs/evidence_grade"}
+      }
+    }
+  },
+  "$defs": {
+    "evidence_grade": {
+      "enum": [
+        "VERIFIED_FROM_CONTROLLED_PROBE",
+        "SUPPORTED_BUT_INCOMPLETE",
+        "UNRESOLVED_REQUIRES_ADDITIONAL_PROBE",
+        "INVALIDATED_BY_CONTROLLED_PROBE",
+        "NOT_CURRENTLY_AVAILABLE"
+      ]
+    },
+    "queried_collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["query_status"],
+      "properties": {
+        "query_status": {"enum": ["SUCCESS_NONEMPTY", "SUCCESS_EMPTY", "UNKNOWN_WITH_REASON", "UNSUPPORTED", "EXCEPTION", "STALE", "MISSING"]},
+        "items": {"type": ["array", "null"]},
+        "reason_code": {"type": ["string", "null"]}
+      }
+    },
+    "queried_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["query_status"],
+      "properties": {
+        "query_status": {"enum": ["SUCCESS_NONEMPTY", "SUCCESS_EMPTY", "UNKNOWN_WITH_REASON", "UNSUPPORTED", "EXCEPTION", "STALE", "MISSING"]},
+        "value": {"type": ["object", "null"]},
+        "reason_code": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+policy,correct_numerator_exact,correct_denominator,correct,wrong_numerator_exact,wrong_denominator,wrong,query_numerator_exact,query_denominator,query,unnecessary_low_numerator_exact,unnecessary_low_denominator,unnecessary_low,high_query_recall_numerator_exact,high_query_recall_denominator,high_query_recall,low_direct_act_numerator_exact,low_direct_act_denominator,low_direct_act
+Never Clarify,110,132,0.8333333333333334,22,132,0.16666666666666666,0,132,0.0,0,88,0.0,0,44,0.0,88,88,1.0
+Always Clarify,132,132,1.0,0,132,0.0,132,132,1.0,88,88,1.0,44,44,1.0,0,88,0.0
+Ambiguity-Only,132,132,1.0,0,132,0.0,132,132,1.0,88,88,1.0,44,44,1.0,0,88,0.0
+Trajectory-Distance,229/2,132,0.8674242424242424,35/2,132,0.13257575757575757,24,132,0.18181818181818182,15,88,0.17045454545454544,9,44,0.20454545454545456,73,88,0.8295454545454546
+Random-Query@matched-rate,352/3,132,0.8888888888888888,44/3,132,0.1111111111111111,44,132,0.3333333333333333,88/3,88,0.3333333333333333,44/3,44,0.3333333333333333,176/3,88,0.6666666666666666
+DriveClarify,132,132,1.0,0,132,0.0,44,132,0.3333333333333333,0,88,0.0,44,44,1.0,88,88,1.0

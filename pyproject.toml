@@ -1,0 +1,11 @@
+# 当前以源码仓库复现：冻结的 schema/fixture 位于包外，尚不发布 wheel。
+# 依赖分别见 requirements/，原生 SimLingo 使用独立 Python 3.8 环境。
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = [
+  "tests/offline_v0",
+  "tests/test_paper_answer_binding.py",
+  "tests/test_paper_native_binding.py",
+  "tests/engineering",
+]
+addopts = "-ra"

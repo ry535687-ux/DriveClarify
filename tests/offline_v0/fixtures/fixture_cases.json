@@ -1,0 +1,874 @@
+{
+  "fixture_schema_version": "driveclarify.offline_fixture.v0.1",
+  "provenance_labels": [
+    "SYNTHETIC_TEST_ONLY",
+    "NOT_CARLA_MEASURED",
+    "NOT_HUMAN_RESPONSE_DATA",
+    "NOT_A_SAFETY_THRESHOLD"
+  ],
+  "label_policy": "Expected outputs below were hand-authored from the frozen v0.1 rule table before evaluator execution.",
+  "base_policy_input": {
+    "kind": "policy",
+    "active_episode_id": "episode-001",
+    "current_state": "AMBIGUITY_ACTIVE",
+    "now_monotonic_s": 10.5,
+    "candidate_cache": {
+      "schema_version": "driveclarify.candidate_cache.v0.1",
+      "cache_id": "cache-001",
+      "episode_id": "episode-001",
+      "source_observation_id": "observation-001",
+      "generated_at_monotonic_s": 10.0,
+      "generated_at_sim_time_s": 100.0,
+      "valid_until_monotonic_s": 12.0,
+      "plan_age_s": 0.5,
+      "refresh_reason": "MANUAL_TEST_REFRESH",
+      "refresh_requested": false,
+      "candidate_ids": [],
+      "validity_status": "VALID"
+    },
+    "timing": {
+      "branch_forward_latency_s": 1.25,
+      "question_latency_s": 0.25,
+      "estimated_response_latency_s": 1.0,
+      "replanning_latency_s": 0.5,
+      "safety_margin_s": 0.5,
+      "time_to_decision_s": 3.6
+    },
+    "timing_metadata": {
+      "trusted": true,
+      "fresh": true,
+      "source": "SYNTHETIC_TEST_ONLY",
+      "unit": "s"
+    },
+    "holding": {
+      "holding_id": "H4-synthetic",
+      "holding_type": "H4",
+      "version": "synthetic-v0.1",
+      "hard_feasible": true,
+      "deadline_status": "KNOWN",
+      "validity_status": "VALID",
+      "valid_until_monotonic_s": 12.0,
+      "can_extend_or_preserve": true,
+      "provenance": "SYNTHETIC_TEST_ONLY"
+    },
+    "question": {
+      "episode_id": "episode-001",
+      "contrasted_slot": "maneuver",
+      "candidate_ids": ["z1", "z2"],
+      "options": ["LEFT", "STRAIGHT"],
+      "signature": "episode-001:maneuver:z1,z2",
+      "action_changing": true
+    },
+    "history_signatures": [],
+    "query_budget_remaining": 1,
+    "pending_question": false,
+    "diagnostics": {
+      "route_l2": 0.01,
+      "route_metric_provenance": "SYNTHETIC_TEST_ONLY"
+    }
+  },
+  "base_consequence": {
+    "schema_version": "driveclarify.consequence.v0.1",
+    "cache_id": "cache-001",
+    "episode_id": "episode-001",
+    "observation_id": "observation-001",
+    "candidate_id": "z1",
+    "computed_at_monotonic_s": 10.25,
+    "task": {
+      "target_road_id": 10,
+      "target_lane_id": 1,
+      "target_exit_id": "exit-A",
+      "goal_region_match": true,
+      "wrong_goal": false,
+      "route_progress": 0.4,
+      "missed_turn_or_exit": false
+    },
+    "safety": {
+      "predicted_collision": false,
+      "min_front_ttc_s": 8.0,
+      "min_rear_ttc_s": 9.0,
+      "min_clearance_m": 4.0,
+      "required_deceleration_mps2": 1.0,
+      "unsafe_speed": false,
+      "safety_class": "SAFE"
+    },
+    "rule": {
+      "red_light_conflict": false,
+      "stop_sign_conflict": false,
+      "lane_invasion": false,
+      "solid_line_crossing": false,
+      "sidewalk_or_offroad": false,
+      "wrong_way": false,
+      "speed_limit_violation": false,
+      "severe_rule_conflict": false
+    },
+    "irreversibility": {
+      "distance_to_branch_m": 20.0,
+      "time_to_branch_s": 5.0,
+      "crossed_branch_boundary": false,
+      "crossed_solid_line": false,
+      "crossed_exit_gore": false,
+      "other_interpretations_still_reachable": true,
+      "recoverability_class": "FULL"
+    },
+    "comfort": {
+      "longitudinal_acceleration_mps2": 0.2,
+      "lateral_acceleration_mps2": 0.1,
+      "jerk_mps3": 0.2,
+      "hard_brake": false,
+      "steering_rate": 0.1
+    },
+    "timing": {
+      "branch_forward_latency_s": 1.25,
+      "question_latency_s": 0.25,
+      "consequence_latency_s": 0.01,
+      "estimated_response_latency_s": 1.0,
+      "replanning_latency_s": 0.5,
+      "safety_margin_s": 0.5,
+      "time_to_decision_s": 3.6,
+      "clarification_slack_s": 0.1,
+      "ask_timing_status": "FEASIBLE",
+      "ask_timing_reason_code": "TIMING_FEASIBLE"
+    }
+  },
+  "consequence_profiles": {
+    "safe_z1": {
+      "candidate_id": "z1"
+    },
+    "safe_equivalent_z2": {
+      "candidate_id": "z2"
+    },
+    "critical_z2": {
+      "candidate_id": "z2",
+      "task": {
+        "target_road_id": 11,
+        "target_lane_id": 2,
+        "target_exit_id": "exit-B"
+      },
+      "irreversibility": {
+        "distance_to_branch_m": 2.0,
+        "time_to_branch_s": 1.0,
+        "other_interpretations_still_reachable": false,
+        "recoverability_class": "PARTIAL"
+      }
+    },
+    "unsafe_z1": {
+      "candidate_id": "z1",
+      "safety": {
+        "predicted_collision": true,
+        "min_front_ttc_s": 0.5,
+        "min_clearance_m": 0.0,
+        "unsafe_speed": true,
+        "safety_class": "UNSAFE"
+      }
+    },
+    "unsafe_z2": {
+      "candidate_id": "z2",
+      "safety": {
+        "predicted_collision": true,
+        "min_front_ttc_s": 0.4,
+        "min_clearance_m": 0.0,
+        "unsafe_speed": true,
+        "safety_class": "UNSAFE"
+      }
+    },
+    "severe_z1": {
+      "candidate_id": "z1",
+      "rule": {
+        "red_light_conflict": true,
+        "severe_rule_conflict": true
+      }
+    },
+    "severe_z2": {
+      "candidate_id": "z2",
+      "rule": {
+        "wrong_way": true,
+        "severe_rule_conflict": true
+      }
+    },
+    "unknown_safety_z1": {
+      "candidate_id": "z1",
+      "safety": {
+        "predicted_collision": null,
+        "min_clearance_m": null,
+        "unsafe_speed": null,
+        "safety_class": "UNKNOWN"
+      }
+    },
+    "unknown_rule_z1": {
+      "candidate_id": "z1",
+      "rule": {
+        "solid_line_crossing": null,
+        "severe_rule_conflict": null
+      }
+    },
+    "safe_z3": {
+      "candidate_id": "z3"
+    }
+  },
+  "cases": [
+    {
+      "fixture_id": "ZERO_VALID_CANDIDATES",
+      "kind": "policy",
+      "candidate_profiles": [],
+      "input_overrides": {
+        "candidate_cache": {"validity_status": "INVALIDATED"}
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "NO_VALID_CANDIDATE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ONE_SAFE_LEGAL_CANDIDATE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "EQUIVALENT_LARGE_ROUTE_DIVERGENCE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "safe_equivalent_z2"],
+      "input_overrides": {"diagnostics": {"route_l2": 99.0}},
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CRITICAL_SMALL_ROUTE_DIVERGENCE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"diagnostics": {"route_l2": 0.001}},
+      "expected": {"decision": "ASK", "reason_code": "CRITICAL_ASK_TIMELY", "state": "QUESTION_SENT"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ALL_CANDIDATES_UNSAFE",
+      "kind": "policy",
+      "candidate_profiles": ["unsafe_z1", "unsafe_z2"],
+      "expected": {"decision": "FALLBACK", "reason_code": "NO_HARD_FEASIBLE_CANDIDATE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ALL_CANDIDATES_SEVERE_RULE",
+      "kind": "policy",
+      "candidate_profiles": ["severe_z1", "severe_z2"],
+      "expected": {"decision": "FALLBACK", "reason_code": "NO_HARD_FEASIBLE_CANDIDATE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "UNKNOWN_HARD_SAFETY",
+      "kind": "policy",
+      "candidate_profiles": ["unknown_safety_z1", "safe_equivalent_z2"],
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_HARD_SAFETY", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "UNKNOWN_HARD_RULE",
+      "kind": "policy",
+      "candidate_profiles": ["unknown_rule_z1", "safe_equivalent_z2"],
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_HARD_RULE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_GT_3_60",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "expected": {"decision": "ASK", "reason_code": "CRITICAL_ASK_TIMELY", "state": "QUESTION_SENT"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_EQ_3_50",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"timing": {"time_to_decision_s": 3.5}},
+      "expected": {"decision": "WAIT", "reason_code": "ASK_TOO_LATE_HOLD_CAN_PRESERVE", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_LT_3_40",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"timing": {"time_to_decision_s": 3.4}},
+      "expected": {"decision": "WAIT", "reason_code": "ASK_TOO_LATE_HOLD_CAN_PRESERVE", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_UNKNOWN",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"timing": {"time_to_decision_s": null}},
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_DECISION_DEADLINE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_UNTRUSTED",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"timing_metadata": {"trusted": false}},
+      "expected": {"decision": "FALLBACK", "reason_code": "TIMING_SOURCE_UNTRUSTED", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "TIMING_STALE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"timing_metadata": {"fresh": false}},
+      "expected": {"decision": "FALLBACK", "reason_code": "TIMING_STALE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "WAIT_AFTER_QUESTION",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {
+        "current_state": "QUESTION_SENT",
+        "pending_question": true,
+        "query_budget_remaining": 0,
+        "history_signatures": ["episode-001:maneuver:z1,z2"]
+      },
+      "expected": {"decision": "WAIT", "reason_code": "WAITING_FOR_ANSWER", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "NO_SAFE_HOLDING",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"holding": {"hard_feasible": false}},
+      "expected": {"decision": "FALLBACK", "reason_code": "NO_SAFE_HOLDING", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "UNKNOWN_HOLDING_DEADLINE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"holding": {"deadline_status": "UNKNOWN"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_HOLDING_DEADLINE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "UNKNOWN_HOLDING_VALIDITY",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"holding": {"validity_status": "UNKNOWN"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_HOLDING_VALIDITY", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_VALID_BEFORE_EXPIRY",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_EQUAL_EXPIRY",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "input_overrides": {"now_monotonic_s": 12.0, "candidate_cache": {"plan_age_s": 2.0}},
+      "expected": {"decision": "FALLBACK", "reason_code": "CACHE_EXPIRED", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_EXPLICIT_EXPIRED",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "input_overrides": {"candidate_cache": {"validity_status": "EXPIRED"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "CACHE_EXPIRED", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_INVALIDATED",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "input_overrides": {"candidate_cache": {"validity_status": "INVALIDATED"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "CACHE_INVALIDATED", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_UNKNOWN",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "input_overrides": {"candidate_cache": {"validity_status": "UNKNOWN"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "UNKNOWN_CACHE_VALIDITY", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "CACHE_LINK_MISMATCH",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "consequence_overrides": {"0": {"cache_id": "cache-wrong"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "CACHE_CONSEQUENCE_ID_MISMATCH", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "QUESTION_REPEAT_PREVENTED",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {
+        "history_signatures": ["episode-001:maneuver:z1,z2"],
+        "query_budget_remaining": 0
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "ASK_WAIT_AND_ROBUST_ACT_UNAVAILABLE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "QUESTION_NOT_ANSWERABLE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"question": {"options": ["LEFT", "LEFT"]}},
+      "expected": {"decision": "FALLBACK", "reason_code": "ASK_WAIT_AND_ROBUST_ACT_UNAVAILABLE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "QUERY_BUDGET_EXHAUSTED",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"query_budget_remaining": 0},
+      "expected": {"decision": "FALLBACK", "reason_code": "ASK_WAIT_AND_ROBUST_ACT_UNAVAILABLE", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "SLOW_WALL_CLOCK_OVERRUN",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {"slow_wall_clock_overrun": true},
+      "expected": {"decision": "FALLBACK", "reason_code": "SLOW_WALL_CLOCK_OVERRUN", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "K1_SENSITIVITY",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1"],
+      "input_overrides": {"diagnostics": {"k_condition": 1, "core_v0": false}},
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "K2_CORE_V0",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "safe_equivalent_z2"],
+      "input_overrides": {"diagnostics": {"k_condition": 2, "core_v0": true}},
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "K3_SENSITIVITY_OUTSIDE_CORE",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "safe_equivalent_z2", "safe_z3"],
+      "input_overrides": {
+        "question": {"candidate_ids": ["z1", "z2", "z3"]},
+        "diagnostics": {"k_condition": 3, "core_v0": false, "scope": "OUTSIDE_CORE_V0"}
+      },
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_OR_EQUIVALENT_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ROBUST_FALLBACK_ACT",
+      "kind": "policy",
+      "candidate_profiles": ["safe_z1", "critical_z2"],
+      "input_overrides": {
+        "query_budget_remaining": 0,
+        "holding": {"hard_feasible": false},
+        "robust_candidate_id": "z1"
+      },
+      "expected": {"decision": "ACT", "reason_code": "ROBUST_FALLBACK_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_NO_RESPONSE",
+      "kind": "answer",
+      "input": {
+        "current_state": "QUESTION_SENT",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "now_monotonic_s": 12.0,
+        "holding": {
+          "holding_id": "H4-answer-synthetic",
+          "holding_type": "H4",
+          "version": "synthetic-v0.1",
+          "hard_feasible": true,
+          "deadline_status": "KNOWN",
+          "validity_status": "VALID",
+          "valid_until_monotonic_s": 15.0,
+          "can_extend_or_preserve": true,
+          "provenance": "SYNTHETIC_TEST_ONLY"
+        },
+        "answer": null
+      },
+      "expected": {"decision": "WAIT", "reason_code": "WAITING_FOR_ANSWER", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_DELAYED",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 16.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": true,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 15.0,
+          "classification": "VALID_SELECTION",
+          "selected_candidate_id": "z1"
+        }
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "STALE_ANSWER", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_INTERPRETATION_STALE",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 16.0,
+        "interpretation_valid_until_s": 14.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": true,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 14.0,
+          "classification": "VALID_SELECTION",
+          "selected_candidate_id": "z1"
+        }
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "STALE_ANSWER", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_INVALID_CONTINUE_WAIT",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "now_monotonic_s": 12.0,
+        "holding": {
+          "holding_id": "H4-answer-synthetic",
+          "holding_type": "H4",
+          "version": "synthetic-v0.1",
+          "hard_feasible": true,
+          "deadline_status": "KNOWN",
+          "validity_status": "VALID",
+          "valid_until_monotonic_s": 15.0,
+          "can_extend_or_preserve": true,
+          "provenance": "SYNTHETIC_TEST_ONLY"
+        },
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 12.0,
+          "classification": "INVALID"
+        }
+      },
+      "expected": {"decision": "WAIT", "reason_code": "INVALID_ANSWER_CONTINUE_WAIT", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_WRONG_ORACLE_OPTION_REVALIDATED",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": true,
+        "revalidation_passed": true,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 12.0,
+          "classification": "VALID_SELECTION",
+          "selected_candidate_id": "z2",
+          "oracle_mismatch": true
+        }
+      },
+      "expected": {"decision": "ACT", "reason_code": "ANSWER_REVALIDATED_ACT", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_STILL_AMBIGUOUS",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "now_monotonic_s": 12.0,
+        "holding": {
+          "holding_id": "H4-answer-synthetic",
+          "holding_type": "H4",
+          "version": "synthetic-v0.1",
+          "hard_feasible": true,
+          "deadline_status": "KNOWN",
+          "validity_status": "VALID",
+          "valid_until_monotonic_s": 15.0,
+          "can_extend_or_preserve": true,
+          "provenance": "SYNTHETIC_TEST_ONLY"
+        },
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 12.0,
+          "classification": "STILL_AMBIGUOUS"
+        }
+      },
+      "expected": {"decision": "WAIT", "reason_code": "ANSWER_STILL_AMBIGUOUS_WAIT", "state": "HOLDING"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_CHANGED_INSTRUCTION",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": true,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 12.0,
+          "classification": "CHANGED_INSTRUCTION",
+          "new_instruction_id": "instruction-002"
+        }
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "NEW_INSTRUCTION_REQUIRES_REFRESH", "state": "AMBIGUITY_ACTIVE"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "ANSWER_WRONG_QUESTION",
+      "kind": "answer",
+      "input": {
+        "current_state": "HOLDING",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": true,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-wrong",
+          "arrived_at_monotonic_s": 12.0,
+          "classification": "VALID_SELECTION",
+          "selected_candidate_id": "z1"
+        }
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "ANSWER_QUESTION_MISMATCH", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "COMMITTED_LATE_ANSWER_IGNORED",
+      "kind": "answer",
+      "input": {
+        "current_state": "COMMITTED",
+        "active_episode_id": "episode-001",
+        "active_question_id": "question-001",
+        "answer_deadline_s": 15.0,
+        "interpretation_valid_until_s": 15.0,
+        "valid_candidate_ids": ["z1", "z2"],
+        "holding_hard_feasible": false,
+        "answer": {
+          "episode_id": "episode-001",
+          "question_id": "question-001",
+          "arrived_at_monotonic_s": 20.0,
+          "classification": "VALID_SELECTION",
+          "selected_candidate_id": "z2"
+        }
+      },
+      "expected": {"decision": "ACT", "reason_code": "LATE_ANSWER_IGNORED", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_NEW_INSTRUCTION",
+      "kind": "reentry",
+      "input": {"event": {"new_instruction_id": "instruction-002", "instruction_valid": true}},
+      "expected": {"decision": "FALLBACK", "reason_code": "REENTRY_NEW_INSTRUCTION", "state": "AMBIGUITY_ACTIVE"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_NEW_AMBIGUITY",
+      "kind": "reentry",
+      "input": {"event": {"new_ambiguity": true, "detector": "oracle-detector", "provenance": "SYNTHETIC_TEST_ONLY", "reason_code": "NEW_SLOT_CONFLICT"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "REENTRY_NEW_AMBIGUITY", "state": "AMBIGUITY_ACTIVE"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_MATERIAL_INVALIDATION",
+      "kind": "reentry",
+      "input": {"event": {"material_invalidation": true, "invalidation_reason": "PLAN_NO_LONGER_REACHABLE"}},
+      "expected": {"decision": "FALLBACK", "reason_code": "REENTRY_MATERIAL_INVALIDATION", "state": "AMBIGUITY_ACTIVE"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_NONE_LATE_ANSWER",
+      "kind": "reentry",
+      "input": {"event": {"late_answer": true}},
+      "expected": {"decision": "ACT", "reason_code": "COMMIT_REENTRY_NONE", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_NONE_COSMETIC_PARAPHRASE",
+      "kind": "reentry",
+      "input": {"event": {"cosmetic_paraphrase": true}},
+      "expected": {"decision": "ACT", "reason_code": "COMMIT_REENTRY_NONE", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REENTRY_NONE_ORDINARY_UPDATE",
+      "kind": "reentry",
+      "input": {"event": {"ordinary_scene_update": true}},
+      "expected": {"decision": "ACT", "reason_code": "COMMIT_REENTRY_NONE", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REFRESH_WITH_VALID_OLD_CONTROL",
+      "kind": "refresh",
+      "input": {
+        "current_state": "COMMITTED",
+        "now_monotonic_s": 10.5,
+        "old_control": {
+          "type": "COMMITTED_PLAN",
+          "validity_status": "VALID",
+          "valid_until_monotonic_s": 12.0,
+          "hard_fields_known_feasible": true
+        }
+      },
+      "expected": {"decision": "ACT", "reason_code": "VALID_OLD_CONTROL_WHILE_REFRESHING", "state": "COMMITTED"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    },
+    {
+      "fixture_id": "REFRESH_WITHOUT_VALID_OLD_CONTROL",
+      "kind": "refresh",
+      "input": {
+        "current_state": "AMBIGUITY_ACTIVE",
+        "now_monotonic_s": 12.0,
+        "old_control": {
+          "type": "HOLDING",
+          "validity_status": "EXPIRED",
+          "valid_until_monotonic_s": 12.0,
+          "hard_fields_known_feasible": true
+        }
+      },
+      "expected": {"decision": "FALLBACK", "reason_code": "NO_VALID_CONTROL_WHILE_REFRESHING", "state": "FALLBACK"},
+      "label_author": "DRIVECLARIFY_V0_1_DESIGN_CONTRACT",
+      "label_basis": "HAND_AUTHORED_FROM_FROZEN_RULE_TABLE",
+      "reviewed_before_execution": true
+    }
+  ]
+}

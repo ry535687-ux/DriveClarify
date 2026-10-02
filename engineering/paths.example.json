@@ -1,0 +1,9 @@
+{
+  "simlingo_root": "../simlingo",
+  "carla_root": "../CARLA_0.9.15",
+  "native_python": "../envs/simlingo/bin/python",
+  "native_site_packages": "../envs/simlingo/lib/python3.8/site-packages",
+  "base_checkpoint": "../simlingo/outputs/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt",
+  "b2d_checkpoint": "../models/a1_selected.ckpt/pytorch_model.pt",
+  "internvl_root": "../simlingo/pretrained/InternVL2-1B"
+}

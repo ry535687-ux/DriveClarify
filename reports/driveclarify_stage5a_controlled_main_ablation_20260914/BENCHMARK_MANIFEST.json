@@ -1,0 +1,212 @@
+{
+  "protocol_id": "DC_CONTROLLED_SELECTION_V1_20260914",
+  "frozen_at_utc": "2026-09-13T22:46:00.247999+00:00",
+  "protocol_sha256": "b45273d40680ac337c5d6255d500b88d828df2dabb55a879d509431e8e589f4e",
+  "historical_data_previously_exposed": true,
+  "new_predictions_generated_at_freeze": false,
+  "primary_sources": [
+    "C_DEV",
+    "C_HIST"
+  ],
+  "public_default": "K1",
+  "counterfactual_intents": [
+    "K1",
+    "K2"
+  ],
+  "variant_unit_weight": "1 / variants_in_base",
+  "undefined_label_response_diagnostic": "OUTPUT_ONLY_RESPONSE_A; no correctness scoring",
+  "cluster": "layout_id within split",
+  "bootstrap_repetitions": 10000,
+  "bootstrap_computational_seed": 20260914,
+  "relation_config": {
+    "grounding_threshold": 0.0,
+    "trajectory_horizon_s": 2.5,
+    "trajectory_step_s": 0.05,
+    "trajectory_threshold_m": 0.1
+  },
+  "B_trajectory_threshold_m": 0.27119792945561905,
+  "protocol_reserve_s": 1.2,
+  "policy_function": "driveclarify_rq1_conditional_supplement.judges_revised.evaluate_c_m5_revised",
+  "sources": [
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/method_inputs/DEV_METHOD_INPUTS.jsonl",
+      "sha256": "f5edbb7cdc21c0fa90ae95df33e3dc81937113c8c46e79ae46dcbf619d7bd87b",
+      "bytes": 588003,
+      "role": "PRIMARY_PUBLIC_SOURCE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/label_authority/DEV_LABELS.jsonl",
+      "sha256": "5ba89f5bd2c98a31e32e85f43b74afe518644af75e9344c4ce84fdff46378fd2",
+      "bytes": 120112,
+      "role": "EVALUATOR_ONLY_LABELS"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/method_inputs/HIST_METHOD_INPUTS.jsonl",
+      "sha256": "246826832e6eded364c798130cf0654b1eef69f895dd268ee169e40b11015ae5",
+      "bytes": 1023249,
+      "role": "PRIMARY_PUBLIC_SOURCE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/label_authority/HIST_LABELS.jsonl",
+      "sha256": "d3dcd67b30c3cb47cad2c586785d2f80481ebe61b6001aa0487b451d3e6574a7",
+      "bytes": 210340,
+      "role": "EVALUATOR_ONLY_LABELS"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/INDEPENDENCE_AUDIT.md",
+      "sha256": "7f03d651dfe875c458001fbc0d1c3a2edb81c7d85b075502aff642b7928bae21",
+      "bytes": 5787,
+      "role": "PROVENANCE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/LABEL_PROVENANCE_AND_REVIEW.md",
+      "sha256": "fd68648af3be54fb3d0e63f24e44f54d2ea55eb773dbb034648a2a7ba53ee6b4",
+      "bytes": 5269,
+      "role": "PROVENANCE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/manifests/INFERENCE_CONFIG_DIGEST.json",
+      "sha256": "44c24c542d24a2855b318b360e9938661f7769e62f3c88c6e24beee7b3e23ded",
+      "bytes": 2806,
+      "role": "PROVENANCE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_grounded_relation_v3_20260910/manifests/SPLIT_MANIFEST.json",
+      "sha256": "26ca72ce9a617085e9d5590c7e8bc6d927d4c8941afbfc59b77b4915b5a164a1",
+      "bytes": 3796,
+      "role": "PROVENANCE"
+    },
+    {
+      "path": "driveclarify_rq1_grounded_relation_v3/__init__.py",
+      "sha256": "2cc5d84f4178b430b15e3db66dccf8c6915fef4536b1958eece92cbe0662c924",
+      "bytes": 83,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_grounded_relation_v3/methods.py",
+      "sha256": "d27913d51fa352c1fd0148f425d2cd37ede795709969eef8af218cc08585c9e1",
+      "bytes": 13829,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_grounded_relation_v3/trajectory.py",
+      "sha256": "6c7aa751dff9997004bed6be3036bf95b8ab715c94cf5c5d4fc86fa2044ec858",
+      "bytes": 2658,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_grounded_relation_v3/contracts.py",
+      "sha256": "ddc4072344ba954da36ff48e33fcc323588eb808c5fb48702b3d8132c8ea9aa7",
+      "bytes": 3646,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_conditional_supplement/__init__.py",
+      "sha256": "2083833a823714058af1459d69d74a315b76fe9f7f2daac24be44358bbc5612d",
+      "bytes": 707,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_conditional_supplement/judges_revised.py",
+      "sha256": "a9c1a566e24e3c90ad7020268a78a2bb37a3f0bcee687536ee83b7afe6f262bf",
+      "bytes": 11555,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "driveclarify_rq1_conditional_supplement/judges.py",
+      "sha256": "e3f496a2edf67be5a317e4ed9f4b46413def772d5ecd14abcc93ee998f71f18d",
+      "bytes": 9843,
+      "role": "FROZEN_CPU_RELATION_IMPLEMENTATION"
+    },
+    {
+      "path": "reports/driveclarify_rq2_t_cg_formal_v3_prospective_evaluability_and_execution_v1/FORMAL_V3_EPISODE_LEVEL_PRIMARY_TABLE.json",
+      "sha256": "2c3e0b8fd9298ea43bc20e0fb9cb0584f89d06ec59707eda2e30fdfb8abd538c",
+      "bytes": 350475,
+      "role": "ORIGINAL_SHARED_TRAJECTORY_ARCHIVE"
+    },
+    {
+      "path": "reports/driveclarify_rq2_t_cg_formal_v3_prospective_evaluability_and_execution_v1/FORMAL_V3_EXECUTION_LEDGER.json",
+      "sha256": "9c78837f5f59cc7eda4eb4b12573cd81b0c96c2c3c08ef423efe7cc0d72850bb",
+      "bytes": 37446,
+      "role": "ORIGINAL_SHARED_TRAJECTORY_ARCHIVE"
+    },
+    {
+      "path": "reports/driveclarify_rq2_t_cg_formal_v3_prospective_evaluability_and_execution_v1/FORMAL_V3_PROTOCOL_FREEZE_RECEIPT.json",
+      "sha256": "22a1ebfd72bf8d62734b2b12e542f38ed9ea7ddbaa93d7268616eb513ed1768b",
+      "bytes": 12604,
+      "role": "ORIGINAL_SHARED_TRAJECTORY_ARCHIVE"
+    },
+    {
+      "path": "reports/driveclarify_rq2_extension_single_cell_evaluability_adjudication_v1/RQ2_EXTENSION_RESULTS.json",
+      "sha256": "7867420b785618eaedace8dfd2db82ff1926240a103c7611379da52837491c98",
+      "bytes": 264405,
+      "role": "EXTENSION_SHARED_TRAJECTORY_ARCHIVE"
+    },
+    {
+      "path": "reports/driveclarify_rq2_extension_single_cell_evaluability_adjudication_v1/S04_ENDPOINT_EVALUABILITY_RECEIPT.json",
+      "sha256": "6350d03c194b6d15c1db972615646707d6809f13893fa1836918377c96428554",
+      "bytes": 2800,
+      "role": "EXTENSION_SHARED_TRAJECTORY_ARCHIVE"
+    },
+    {
+      "path": "reports/driveclarify_rq1_conditional_supplement_20260911/sample_results.csv",
+      "sha256": "29127083680062aa3ae3718050ad8aab3859b7bbea514982f0f652c145a7ab2f",
+      "bytes": 1306746,
+      "role": "STEP1_VERIFIED_TRAJECTORY_POINTS"
+    },
+    {
+      "path": "reports/driveclarify_experiment_restructure_step1_20260912/results/RECOMPUTED_RQ1.json",
+      "sha256": "fcf3c2f4726b3b4acb137d0a631d490f050efc3b97262f5f8261e883f899c1d1",
+      "bytes": 68787,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_rq3_v3_technical_validity_recovery_and_resume_v1/PART_B_FINAL_RESULTS.json",
+      "sha256": "4fbd71649535c91543d28c0a3d694a943a0fb1f0d2142c972d70e9f3582a5cee",
+      "bytes": 5208,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_rq3_v3_technical_validity_recovery_and_resume_v1/PART_B_FINAL_LIFECYCLE_ANALYSIS.json",
+      "sha256": "da68cb1f1c74baeacaa3dcd3994cce73960ca34ae07e30ea440d0333118c46f2",
+      "bytes": 2523,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_stage3c_b_native_runtime_20260914/FINAL_REPORT.md",
+      "sha256": "97c7563f4a5b69b8f309a30b2576f7b26717d3e54ccc57f7bb316f86e7104e32",
+      "bytes": 7468,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_stage3c_native_clear_runtime_20260914/FINAL_REPORT.md",
+      "sha256": "347c7e279e8a417b131ac2c5d04b3c769e3996c3ac74a0ebeb2d4275ddfa7b93",
+      "bytes": 7073,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_stage3d_a_stall_watchdog_20260914/FINAL_REPORT.md",
+      "sha256": "dd2a47a051e0a984412e72255f39c76e176fa539eccb290e69fda41ecc6fc549",
+      "bytes": 2970,
+      "role": "HISTORICAL_CONTEXT_NOT_PRIMARY"
+    },
+    {
+      "path": "reports/driveclarify_stage5a_controlled_main_ablation_20260914/scripts/policies.py",
+      "sha256": "7d42690c4638d3928eca48bda06c398180c04c0e998ef5480e0e1a784dbd1bd5",
+      "bytes": 2807,
+      "role": "NEW_POLICY_IMPLEMENTATION_FROZEN_BEFORE_OUTPUT"
+    },
+    {
+      "path": "reports/driveclarify_stage5a_controlled_main_ablation_20260914/scripts/predict.py",
+      "sha256": "e885c433e96b0bb1b4b4e2f83fcfcab8711e32b183d1b3349029fa39ba5b263e",
+      "bytes": 2145,
+      "role": "NEW_POLICY_IMPLEMENTATION_FROZEN_BEFORE_OUTPUT"
+    },
+    {
+      "path": "reports/driveclarify_stage5a_controlled_main_ablation_20260914/scripts/common.py",
+      "sha256": "a1314fc160d8e8699474a6a6b0b2457124d6aca37f9eb23d04ec471ff9743ff1",
+      "bytes": 1927,
+      "role": "NEW_POLICY_IMPLEMENTATION_FROZEN_BEFORE_OUTPUT"
+    }
+  ]
+}

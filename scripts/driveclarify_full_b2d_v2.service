@@ -1,0 +1,22 @@
+[Unit]
+Description=DriveClarify frozen full Bench2Drive V2 unattended campaign
+After=default.target
+StartLimitIntervalSec=3600
+StartLimitBurst=3
+
+[Service]
+Type=exec
+WorkingDirectory=/home/buaa/wrh/DriveClarify
+ExecStart=/bin/bash /home/buaa/wrh/DriveClarify/scripts/run_full_bench2drive_unattended.sh --service
+StandardOutput=append:/home/buaa/wrh/DriveClarify/reports/driveclarify_transparent_bypass_full_bench2drive_v2/audit/formal_supervisor.log
+StandardError=inherit
+Restart=on-failure
+RestartPreventExitStatus=70 73 78
+RestartSec=15
+KillMode=control-group
+TimeoutStopSec=120
+UMask=0022
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+
+# 不设 Install：不在重启后盲目重复启动；本服务通过 user linger 脱离登录及聊天会话。

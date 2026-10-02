@@ -1,0 +1,91 @@
+{
+  "all_support_conditions_pass": false,
+  "analysis_digest": "94421c6649cde01b00ee35462a3d6abab64db2ff6a29776da397a683ede84bbc",
+  "evaluability_gates": {
+    "decision": true,
+    "execution": true,
+    "lifecycle": true
+  },
+  "schema": "driveclarify.rq3-v3.part-b-lifecycle-analysis.v1",
+  "support_conditions": {
+    "HIGH_lifecycle_overall": true,
+    "HIGH_lifecycle_per_condition": true,
+    "HIGH_timely_ASK": true,
+    "LOW_ACT": true,
+    "LOW_unnecessary_ASK": true,
+    "native_completion_overall": true,
+    "native_completion_per_condition": false,
+    "overall_correct": true,
+    "pedestrian_collision_zero": true,
+    "per_condition_correct": true,
+    "safe_completion_overall": true,
+    "safe_completion_per_condition": false,
+    "wrong_goal_zero": true
+  },
+  "timing": {
+    "ASK_TTCmt_s": {
+      "count": 19,
+      "maximum": 3.0,
+      "mean": 3.0,
+      "median": 3.0,
+      "minimum": 3.0,
+      "standard_deviation": 0.0
+    },
+    "Full_Replan_latency_simulation_s": {
+      "count": 19,
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "minimum": 0.0,
+      "standard_deviation": 0.0
+    },
+    "Full_Replan_latency_wall_s": {
+      "count": 19,
+      "maximum": 0.010744075058028102,
+      "mean": 0.007842487624944433,
+      "median": 0.007698221015743911,
+      "minimum": 0.006792662083171308,
+      "standard_deviation": 0.0007851149261311706
+    },
+    "answer_latency_simulation_s": {
+      "count": 19,
+      "maximum": 0.05000000074505806,
+      "mean": 0.05000000074505806,
+      "median": 0.05000000074505806,
+      "minimum": 0.05000000074505806,
+      "standard_deviation": 0.0
+    },
+    "answer_to_action_latency_simulation_s": {
+      "count": 19,
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "minimum": 0.0,
+      "standard_deviation": 0.0
+    },
+    "clarification_induced_delay_simulation_s": {
+      "count": 19,
+      "maximum": 0.05000000074505806,
+      "mean": 0.05000000074505806,
+      "median": 0.05000000074505806,
+      "minimum": 0.05000000074505806,
+      "standard_deviation": 0.0
+    },
+    "first_evidence_sufficiency_TTCmt_s": {
+      "count": 19,
+      "maximum": 3.0,
+      "mean": 3.0,
+      "median": 3.0,
+      "minimum": 3.0,
+      "standard_deviation": 0.0
+    },
+    "remaining_margin_at_ASK_s": {
+      "count": 19,
+      "maximum": 1.7999999999999998,
+      "mean": 1.7999999999999998,
+      "median": 1.7999999999999998,
+      "minimum": 1.7999999999999998,
+      "standard_deviation": 0.0
+    }
+  }
+}

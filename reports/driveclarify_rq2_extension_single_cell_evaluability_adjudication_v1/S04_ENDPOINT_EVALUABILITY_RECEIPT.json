@@ -1,0 +1,52 @@
+{
+  "adjudication_class": "B",
+  "cell_id": "RQ2EXT-V1-ORD-TOO-LATE-S04-BB2C4B6B5417DA7B",
+  "censoring": {
+    "TTCmt_imputed": false,
+    "commitment_reached": false,
+    "deadline_imputed": false,
+    "kind": "RIGHT_CENSORED_BY_NATIVE_SCIENTIFIC_NONCOMPLETION_BEFORE_FIRST_REVEAL_AND_COMMITMENT",
+    "reserve_changed": false,
+    "reserve_s": 1.2
+  },
+  "classification": "SCIENTIFIC_NONCOMPLETION_BEFORE_COMMITMENT",
+  "evidence_observations_before_native_noncompletion": {
+    "first_evidence_event_reached": false,
+    "maximum_route_progress_m": 20.54501067477048,
+    "probe_rows": 1552,
+    "second_evidence_event_reached": false,
+    "simulation_interval_s": [
+      0.10000000149011612,
+      77.65000115707517
+    ],
+    "status": "EVALUABLE_OBSERVED_PREFIX",
+    "world_state_rows": 1552
+  },
+  "full_endpoint_evaluability": {
+    "B1_actionable_window_existence": "NOT_EVALUABLE_FOR_ACTIONABLE_WINDOW_EXISTENCE_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "B1_precommitment_sufficiency": "NOT_EVALUABLE_FOR_PRECOMMITMENT_SUFFICIENCY_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "B2_actionable_window_existence": "NOT_EVALUABLE_FOR_ACTIONABLE_WINDOW_EXISTENCE_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "B2_precommitment_sufficiency": "NOT_EVALUABLE_FOR_PRECOMMITMENT_SUFFICIENCY_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "TTCmt": "NOT_EVALUABLE_FOR_TTCMT_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "actionability_deadline": "NOT_EVALUABLE_FOR_ACTIONABILITY_DEADLINE_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "actionable_window_duration": "NOT_EVALUABLE_FOR_ACTIONABLE_WINDOW_DURATION_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "commitment_relative_margin": "NOT_EVALUABLE_FOR_COMMITMENT_RELATIVE_MARGIN_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "commitment_time": "NOT_EVALUABLE_FOR_COMMITMENT_TIME_DUE_TO_SCIENTIFIC_NONCOMPLETION",
+    "first_sufficiency_TTCmt": "NOT_EVALUABLE_FOR_FIRST_SUFFICIENCY_TTCMT_DUE_TO_SCIENTIFIC_NONCOMPLETION"
+  },
+  "native_termination_observed": true,
+  "observed_prefix_outcomes": {
+    "B1_actionable_window_observed_before_termination": false,
+    "B1_ever_sufficient_before_termination": false,
+    "B2_actionable_window_observed_before_termination": false,
+    "B2_ever_sufficient_before_termination": false,
+    "basis": "No frozen reveal event was reached; required sufficiency fields never became available. Therefore no sufficient state, a prerequisite of an actionable opportunity, occurred in the observed prefix."
+  },
+  "receipt_digest": "e23630477d50585a40939f7c5cfb8e0cbd1addef4a4c1cd03aa6507a0e286692",
+  "schema_version": "driveclarify.rq2_extension.s04_endpoint_evaluability.v1",
+  "scientific_exposure_observed": true,
+  "scientific_retries": 0,
+  "seed_replacements": 0,
+  "stage": "RQ2_EXTENSION_SINGLE_CELL_EVALUABILITY_ADJUDICATION_V1",
+  "technical_invalidity": false
+}

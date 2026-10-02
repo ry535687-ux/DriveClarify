@@ -1,0 +1,100 @@
+{
+  "contract_id": "STEP3A_TOWN04_TWO_RIGHT_TURN_GATES_V2",
+  "geometry_status": "STATIC_BOUND",
+  "qualification": "NEEDS_DEV_DRIVING",
+  "source": "reports/driveclarify_v3_selected_edge_roadoption_command_owner_native_closure/NATIVE_RUNS/MRC-EL-003/DEV_V3_COMMAND_OWNER_CYCLE_02/GROUNDED_LANGUAGE_V1_LIVE_RECEIPT.json",
+  "derivation": "独立预声明任务：通过所指右转连接段；进入另一连接段即违反该任务顺序，物理可恢复性未验证。门取地图连接段的中点、倒数第4点和终点切线；0.75m半宽仅为待核验评价参数，非安全余量。",
+  "sampling_rule": "frame 差及仿真时间递增检查保留；实际 recorder 固定时步未绑定，不声称真实时钟一致性已检验。",
+  "max_frame_gap": 1,
+  "safety_endpoints": [
+    "collision",
+    "offroad",
+    "red_light",
+    "stop_sign",
+    "route_deviation"
+  ],
+  "branches": {
+    "J870_RIGHT": {
+      "irreversible_for_task": true,
+      "entry": {
+        "center": [
+          330.94952392578125,
+          -175.1331329345703
+        ],
+        "normal": [
+          -0.6459133925504341,
+          -0.763410695054758
+        ],
+        "half_width_m": 0.75
+      },
+      "exit": {
+        "center": [
+          327.6894226074219,
+          -181.25100708007812
+        ],
+        "normal": [
+          -0.37469262211504983,
+          -0.9271490920734101
+        ],
+        "half_width_m": 0.75
+      },
+      "end": {
+        "center": [
+          326.9167785644531,
+          -183.1631622314453
+        ],
+        "normal": [
+          -0.3746473284262479,
+          -0.9271673955133858
+        ],
+        "half_width_m": 0.75
+      }
+    },
+    "J483_RIGHT": {
+      "irreversible_for_task": true,
+      "entry": {
+        "center": [
+          315.8320007324219,
+          -173.65541076660156
+        ],
+        "normal": [
+          -0.7827655548136665,
+          -0.6223167089169732
+        ],
+        "half_width_m": 0.75
+      },
+      "exit": {
+        "center": [
+          314.56048583984375,
+          -177.2394561767578
+        ],
+        "normal": [
+          0.008911050946769972,
+          -0.9999602957973003
+        ],
+        "half_width_m": 0.75
+      },
+      "end": {
+        "center": [
+          314.58184814453125,
+          -179.63790893554688
+        ],
+        "normal": [
+          0.008907068413845089,
+          -0.9999603312793319
+        ],
+        "half_width_m": 0.75
+      }
+    }
+  },
+  "prior_contract_id": "STEP3_TOWN04_TWO_RIGHT_TURN_GATES_V1",
+  "gate_boundary_rule": "NEGATIVE_TO_NONNEGATIVE_CLOSED_BOUNDARY",
+  "endpoint_semantics": "有向闭边界到达，da<0<=db；接触后退也记事件，不等于已穿入正侧。entry→exit→end 依序到达终点门线即完成。",
+  "recorder_cadence": {
+    "binding": "UNBOUND",
+    "recorder_contract_id": null,
+    "source": null,
+    "frame_period_s": null,
+    "tolerance_s": null
+  }
+}

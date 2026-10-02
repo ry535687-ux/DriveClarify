@@ -1,0 +1,92 @@
+{
+  "contract_id": "STEP3A_SYNTHETIC_CLOSED_BOUNDARY_AND_CADENCE_V1",
+  "max_frame_gap": 1,
+  "safety_endpoints": [
+    "collision",
+    "offroad",
+    "red_light"
+  ],
+  "branches": {
+    "LEFT": {
+      "irreversible_for_task": true,
+      "entry": {
+        "center": [
+          1,
+          2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      },
+      "exit": {
+        "center": [
+          3,
+          2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      },
+      "end": {
+        "center": [
+          4,
+          2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      }
+    },
+    "RIGHT": {
+      "irreversible_for_task": true,
+      "entry": {
+        "center": [
+          1,
+          -2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      },
+      "exit": {
+        "center": [
+          3,
+          -2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      },
+      "end": {
+        "center": [
+          4,
+          -2
+        ],
+        "normal": [
+          1,
+          0
+        ],
+        "half_width_m": 0.4
+      }
+    }
+  },
+  "gate_boundary_rule": "NEGATIVE_TO_NONNEGATIVE_CLOSED_BOUNDARY",
+  "endpoint_semantics": "有向闭边界到达，da<0<=db；接触后退也记事件，不等于已穿入正侧。entry→exit→end 依序到达终点门线即完成。",
+  "recorder_cadence": {
+    "binding": "FIXED_STEP_RECORDER_CONTRACT",
+    "recorder_contract_id": "SYNTHETIC_FIXTURE_50MS",
+    "source": "tests/fixtures.py:trace 显式 sim_time_s=frame*0.05；仅合成记录器合同",
+    "frame_period_s": 0.05,
+    "tolerance_s": 1e-09
+  }
+}

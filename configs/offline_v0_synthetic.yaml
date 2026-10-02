@@ -1,0 +1,40 @@
+# SYNTHETIC_TEST_ONLY
+# NOT_CARLA_MEASURED
+# NOT_HUMAN_RESPONSE_DATA
+# NOT_A_SAFETY_THRESHOLD
+# 仅供 CPU-only offline evaluator fixtures 使用。
+
+config_status: SYNTHETIC_TEST_ONLY
+
+protocol:
+  query_budget_per_episode: 1
+  unknown_hard_field_policy: non_feasible
+
+synthetic_test_only:
+  provenance_labels:
+    - SYNTHETIC_TEST_ONLY
+    - NOT_CARLA_MEASURED
+    - NOT_HUMAN_RESPONSE_DATA
+    - NOT_A_SAFETY_THRESHOLD
+  t_wait_max_s: 3.0
+  branch_latency_s: 1.25
+  question_latency_s: 0.25
+  response_latency_s: 1.00
+  replanning_latency_s: 0.50
+  safety_margin_s: 0.50
+  t_clarify_s: 3.50
+
+preregistered_timing_cases:
+  - case_id: TIMING_GT_3_60
+    t_decision_s: 3.60
+    expected_ask_timing_status: FEASIBLE
+  - case_id: TIMING_EQ_3_50
+    t_decision_s: 3.50
+    expected_ask_timing_status: INFEASIBLE_KNOWN
+  - case_id: TIMING_LT_3_40
+    t_decision_s: 3.40
+    expected_ask_timing_status: INFEASIBLE_KNOWN
+  - case_id: TIMING_UNKNOWN
+    t_decision_s: UNKNOWN
+    expected_ask_timing_status: UNKNOWN
+    expected_reason_code: UNKNOWN_DECISION_DEADLINE

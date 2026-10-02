@@ -1,0 +1,75 @@
+{
+  "contract_id": "DC_NATIVE_CLEAR_INIT_DIAG_V1_A_GATES_DRAFT",
+  "status": "DRAFT_NOT_MAP_OR_DRIVING_VALIDATED",
+  "public_task_id": "A",
+  "route_sha256": "fab81ebb1960ff68ad4709e41d628817d1f6531e7e2c82c5da665af060feff5a",
+  "gate_boundary_rule": "NEGATIVE_TO_NONNEGATIVE_CLOSED_BOUNDARY",
+  "gates": [
+    {
+      "name": "entry",
+      "source_waypoint_index_zero_based": 4,
+      "center": [
+        12.9,
+        0.0
+      ],
+      "normal": [
+        2.0,
+        -0.1
+      ],
+      "half_width_m": 1.5
+    },
+    {
+      "name": "exit",
+      "source_waypoint_index_zero_based": 7,
+      "center": [
+        18.9,
+        -0.0
+      ],
+      "normal": [
+        2.0,
+        0.0
+      ],
+      "half_width_m": 1.5
+    },
+    {
+      "name": "local_end",
+      "source_waypoint_index_zero_based": 10,
+      "center": [
+        24.9,
+        -0.1
+      ],
+      "normal": [
+        2.0,
+        0.0
+      ],
+      "half_width_m": 1.5
+    }
+  ],
+  "gate_source": "原 XML 出口支路的作者路点；normal 是相邻路点 XY 差；1.5m 为本诊断预声明门半宽，不是实测车道宽或安全阈值",
+  "local_end_is_native_endpoint": false,
+  "native_endpoint_xyz": [
+    38.8,
+    -0.0,
+    0.0
+  ],
+  "remaining_authored_chord_length_after_local_end_m": 13.902498439450078,
+  "semantic_limit": "只认按序有向闭边界到达；接触后退亦记事件；不认证严格穿入正侧、不可恢复或错误分支全覆盖",
+  "max_frame_gap": 1,
+  "recorder_cadence": {
+    "binding": "FIXED_STEP_RECORDER_CONTRACT",
+    "recorder_contract_id": "NATIVE_EVALUATOR_20HZ_CP1_SNAPSHOT_V1",
+    "source": "/home/buaa/wrh/simlingo/Bench2Drive/leaderboard/leaderboard/leaderboard_evaluator.py:94,203-245; observer_hook:253-288",
+    "source_sha256": "745b1635a820276f665b95d63c783cf2e8eec62363784a731877bd3062511964",
+    "frame_period_s": 0.05,
+    "tolerance_s": 1e-05,
+    "tolerance_source": "本开发合同预声明浮点比较容差，不是实测时钟精度",
+    "observed_consistency": null
+  },
+  "inputs": [
+    "snapshot_frame",
+    "snapshot_elapsed_seconds",
+    "snapshot_delta_seconds",
+    "ego.location_xyz"
+  ],
+  "method_truth_inputs": []
+}

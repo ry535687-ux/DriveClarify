@@ -1,0 +1,20 @@
+[
+  {
+    "frame": 1,
+    "sim_time_s": 1.0,
+    "observation_id": "SYNTHETIC:1",
+    "xy": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "frame": 2,
+    "sim_time_s": 2.0,
+    "observation_id": "SYNTHETIC:2",
+    "xy": [
+      0.0,
+      0.0
+    ]
+  }
+]

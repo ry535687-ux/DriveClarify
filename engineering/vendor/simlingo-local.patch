@@ -1,0 +1,1421 @@
+diff --git a/Bench2Drive/leaderboard/leaderboard/leaderboard_evaluator.py b/Bench2Drive/leaderboard/leaderboard/leaderboard_evaluator.py
+index 0aa615e..78b2bf7 100644
+--- a/Bench2Drive/leaderboard/leaderboard/leaderboard_evaluator.py
++++ b/Bench2Drive/leaderboard/leaderboard/leaderboard_evaluator.py
+@@ -206,11 +206,12 @@ class LeaderboardEvaluator(object):
+         """
+         self.carla_path = os.environ["CARLA_ROOT"]
+         args.port = find_free_port(args.port)
+-        cmd1 = f"{os.path.join(self.carla_path, 'CarlaUE4.sh')} -RenderOffScreen -nosound -carla-rpc-port={args.port} -graphicsadapter={args.gpu_rank}"
++        # cmd1 = f"{os.path.join(self.carla_path, 'CarlaUE4.sh')} -RenderOffScreen -nosound -carla-rpc-port={args.port} -graphicsadapter={args.gpu_rank}"
++        cmd1 = f"{os.path.join(self.carla_path, 'CarlaUE4.sh')} -nosound -carla-rpc-port={args.port} -graphicsadapter={args.gpu_rank}"
+         self.server = subprocess.Popen(cmd1, shell=True, preexec_fn=os.setsid)
+         print(cmd1, self.server.returncode, flush=True)
+         atexit.register(os.killpg, self.server.pid, signal.SIGKILL)
+-        time.sleep(60)
++        time.sleep(20)
+             
+         attempts = 0
+         num_max_restarts = 20
+diff --git a/Bench2Drive/leaderboard/leaderboard/scenarios/route_scenario.py b/Bench2Drive/leaderboard/leaderboard/scenarios/route_scenario.py
+index 8cf21c3..a738111 100644
+--- a/Bench2Drive/leaderboard/leaderboard/scenarios/route_scenario.py
++++ b/Bench2Drive/leaderboard/leaderboard/scenarios/route_scenario.py
+@@ -12,6 +12,7 @@ This module provides Challenge routes as standalone scenarios
+ from __future__ import print_function
+ 
+ import glob
++import json
+ import os
+ import sys
+ import importlib
+@@ -49,6 +50,41 @@ from leaderboard.utils.route_manipulation import interpolate_trajectory
+ import leaderboard.utils.parked_vehicles as parked_vehicles
+ 
+ 
++RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_ENV = "DRIVECLARIFY_RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY"
++RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_V2 = "RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_V2"
++RQ2_T_CG_BACKGROUND_TRAFFIC_RECEIPT_ENV = "DRIVECLARIFY_RQ2_T_CG_BACKGROUND_TRAFFIC_RUNTIME_RECEIPT"
++
++
++def _rq2_t_cg_background_traffic_disabled():
++    """Return true only for the prospectively isolated RQ2-T-CG V2 children."""
++    return os.environ.get(RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_ENV) == RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_V2
++
++
++def _write_rq2_t_cg_background_traffic_receipt():
++    """Persist evaluator-side proof that no automatic background generator was attached."""
++    path = os.environ.get(RQ2_T_CG_BACKGROUND_TRAFFIC_RECEIPT_ENV)
++    if not path:
++        return
++    value = {
++        "schema_version": "driveclarify.rq2_t_cg.background_traffic_runtime.v2",
++        "status": "PASS_RANDOM_BACKGROUND_TRAFFIC_DISABLED",
++        "policy_id": RQ2_T_CG_BACKGROUND_TRAFFIC_POLICY_V2,
++        "background_behavior_attached": False,
++        "traffic_manager_generated_background_vehicles_requested": 0,
++        "automatic_parked_mesh_actors_requested": 0,
++        "scenario_owned_actor_initialization_changed": False,
++        "ego_vehicle_control_changed": False,
++    }
++    directory = os.path.dirname(path)
++    if directory:
++        os.makedirs(directory, exist_ok=True)
++    temporary = path + ".tmp"
++    with open(temporary, "w", encoding="utf-8") as handle:
++        json.dump(value, handle, indent=2, sort_keys=True)
++        handle.write("\n")
++    os.replace(temporary, path)
++
++
+ class RouteScenario(BasicScenario):
+ 
+     """
+@@ -204,6 +240,9 @@ class RouteScenario(BasicScenario):
+ 
+     def spawn_parked_vehicles(self, ego_vehicle, max_scenario_distance=10):
+         """Spawn parked vehicles."""
++        if _rq2_t_cg_background_traffic_disabled():
++            return
++
+         def is_close(slot_location, ego_location):
+             return slot_location.distance(ego_location) < self.PARKED_VEHICLES_INIT_THRESHOLD
+         def is_free(slot_location):
+@@ -400,8 +439,13 @@ class RouteScenario(BasicScenario):
+         # register var
+         self.scenario_triggerer = scenario_triggerer
+ 
+-        # Add the Background Activity
+-        behavior.add_child(BackgroundBehavior(self.ego_vehicles[0], self.route, name="BackgroundActivity"))
++        # The controlled RQ2-T-CG mechanism experiment prospectively removes
++        # unrelated TrafficManager traffic.  Explicit route scenarios are still
++        # initialized and attached through ``build_scenarios`` unchanged.
++        if _rq2_t_cg_background_traffic_disabled():
++            _write_rq2_t_cg_background_traffic_receipt()
++        else:
++            behavior.add_child(BackgroundBehavior(self.ego_vehicles[0], self.route, name="BackgroundActivity"))
+ 
+         behavior.add_children(scenario_behaviors)
+         return behavior
+diff --git a/Bench2Drive/leaderboard/leaderboard/scenarios/scenario_manager.py b/Bench2Drive/leaderboard/leaderboard/scenarios/scenario_manager.py
+index 5161b6c..f02d911 100644
+--- a/Bench2Drive/leaderboard/leaderboard/scenarios/scenario_manager.py
++++ b/Bench2Drive/leaderboard/leaderboard/scenarios/scenario_manager.py
+@@ -225,7 +225,31 @@ class ScenarioManager(object):
+                 sys.stdout.flush()
+ 
+             if self.scenario_tree.status != py_trees.common.Status.RUNNING:
++                probe = getattr(self._agent_wrapper._agent, "_dc_probe", None)
++                record_terminal = getattr(probe, "record_execution_terminal", None)
++                if callable(record_terminal):
++                    terminal_tokens = {
++                        py_trees.common.Status.SUCCESS: "PY_TREES_STATUS_SUCCESS",
++                        py_trees.common.Status.FAILURE: "PY_TREES_STATUS_FAILURE",
++                    }
++                    token = terminal_tokens.get(self.scenario_tree.status)
++                    if token is not None:
++                        record_terminal(token, timestamp.elapsed_seconds)
+                 self._running = False
++            else:
++                # RQ2-T 2A 的默认关闭式行政终止钩子。只有显式启用的
++                # SHARED_PREFIX_LONGITUDINAL_OWNER_V1 才能返回 True；依据仅为
++                # CARLA snapshot elapsed_seconds，wall/watchdog 不进入此分支。
++                probe = getattr(self._agent_wrapper._agent, "_dc_probe", None)
++                should_end = getattr(probe, "should_end_scientific_horizon", None)
++                if callable(should_end) and should_end(timestamp.elapsed_seconds):
++                    record_terminal = getattr(probe, "record_execution_terminal", None)
++                    if callable(record_terminal):
++                        record_terminal(
++                            "MAX_2A_SIMULATED_HORIZON_REACHED",
++                            timestamp.elapsed_seconds,
++                        )
++                    self._running = False
+ 
+             ego_trans = self.ego_vehicles[0].get_transform()
+             self._spectator.set_transform(carla.Transform(ego_trans.location + carla.Location(z=70),
+diff --git a/Bench2Drive/leaderboard/scripts/run_evaluation_debug.sh b/Bench2Drive/leaderboard/scripts/run_evaluation_debug.sh
+old mode 100644
+new mode 100755
+index 4353fc8..760b104
+--- a/Bench2Drive/leaderboard/scripts/run_evaluation_debug.sh
++++ b/Bench2Drive/leaderboard/scripts/run_evaluation_debug.sh
+@@ -2,10 +2,10 @@
+ BASE_PORT=2020
+ BASE_TM_PORT=8020
+ IS_BENCH2DRIVE=True
+-export WORK_DIR=/home/karenz/coding/simlingo_cleanup
+-BASE_ROUTES=/home/karenz/coding/simlingo_cleanup/leaderboard/data/bench2drive220
+-TEAM_AGENT=team_code/agent_simlingo_base.py
+-TEAM_CONFIG=/home/karenz/coding/simlingo_cleanup/outputs/2025_04_07_05_12_40_simlingo_basev2_after_cleanup/checkpoints/epoch=029.ckpt/pytorch_model.pt
++export WORK_DIR=/home/buaa/wrh/simlingo
++BASE_ROUTES=/home/buaa/wrh/simlingo/leaderboard/data/bench2drive220
++TEAM_AGENT=team_code/agent_simlingo.py
++TEAM_CONFIG=/home/buaa/wrh/simlingo/outputs/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt
+ # TEAM_CONFIG=/home/katrinrenz/coding/wayve_carla/outputs/cvpr/2024_10_29_02_59_56_AML_305_15_internvl1B_lmdriveaugm_commentary_cotv3_vqav3_dpoalignv3_safetyflag_alltowns/checkpoints/epoch=013.ckpt/pytorch_model.pt
+ # TEAM_CONFIG=/home/katrinrenz/coding/wayve_carla/outputs/204_XX/2024_08_29_08_37_19_AML_204_00_internvl1B_lmdriveaugm_route_as_target_point_command/checkpoints/epoch=029.ckpt/pytorch_model.pt
+ # TEAM_CONFIG=your_team_agent_config.py+your_team_agent_ckpt.pth # for UniAD and VAD
+diff --git a/setup_carla.sh b/setup_carla.sh
+old mode 100644
+new mode 100755
+diff --git a/simlingo_training/dataloader/datamodule.py b/simlingo_training/dataloader/datamodule.py
+index b0d4a06..3f84de3 100644
+--- a/simlingo_training/dataloader/datamodule.py
++++ b/simlingo_training/dataloader/datamodule.py
+@@ -14,7 +14,13 @@ from transformers import AutoProcessor
+ # Local/project specific imports
+ # from simlingo_training.dataloader.dataset_driving import Data_Driving # is called directly by hydra.utils.instantiate, keeping here to make it easier to find
+ # from simlingo_training.dataloader.dataset_dreamer import Data_Dreamer # is called directly by hydra.utils.instantiate, keeping here to make it easier to find
+-from simlingo_training.utils.custom_types import DrivingExample, DrivingInput, DrivingLabel, LanguageLabel
++from simlingo_training.utils.custom_types import (
++    DrivingExample,
++    DrivingInput,
++    DrivingLabel,
++    LanguageLabel,
++    normalize_route_switch_active,
++)
+ from simlingo_training.utils.internvl2_utils import preprocess_image_batch, get_custom_chat_template, get_num_image_tokens_per_patch
+ from simlingo_training.utils.projection import get_camera_intrinsics, get_camera_extrinsics
+ 
+@@ -325,6 +331,13 @@ class DataModule(LightningDataModule):
+                 target_point=torch.tensor(np.asarray([data[i].target_points for i in range(len(data))])).float(),  # [B, 2] float32
+                 prompt=prompt_languagelabel,
+                 prompt_inference=prompt_question_languagelabel,
++                route_switch_active=torch.tensor(
++                    [
++                        [normalize_route_switch_active(data[i].route_switch_active)]
++                        for i in range(BS)
++                    ],
++                    dtype=torch.bool,
++                ),
+             )
+ 
+         driving_label=DrivingLabel(
+@@ -433,4 +446,4 @@ def test(cfg):
+             
+ 
+ if __name__ == "__main__":
+-    test()
+\ No newline at end of file
++    test()
+diff --git a/simlingo_training/models/adaptors/adaptors.py b/simlingo_training/models/adaptors/adaptors.py
+index ca5c6fb..8f4b326 100644
+--- a/simlingo_training/models/adaptors/adaptors.py
++++ b/simlingo_training/models/adaptors/adaptors.py
+@@ -93,6 +93,42 @@ class WaypointInputAdaptor(nn.Module):
+         return x
+ 
+ 
++class RouteSwitchResidualAdapter(nn.Module):
++    """Apply the frozen A1 residual to existing target-point embeddings.
++
++    The module does not create tokens or inspect route/map identity.  Missing,
++    malformed, disabled, or non-boolean markers fail safely to the exact input.
++    """
++
++    def __init__(self, hidden_size: int = 896, enabled: bool = False):
++        super().__init__()
++        if hidden_size != 896:
++            raise ValueError("ROUTE_SWITCH_HIDDEN_SIZE_MUST_BE_896")
++        self.hidden_size = hidden_size
++        self.enabled = bool(enabled)
++        self.delta_switch = nn.Parameter(torch.zeros(hidden_size))
++
++    def forward(self, target_embeddings: Tensor, route_switch_active=None) -> Tensor:
++        if not self.enabled:
++            return target_embeddings
++        if not isinstance(route_switch_active, Tensor):
++            return target_embeddings
++        if route_switch_active.dtype is not torch.bool:
++            return target_embeddings
++        if route_switch_active.ndim != 2 or route_switch_active.shape != (
++                target_embeddings.shape[0], 1):
++            return target_embeddings
++        if (target_embeddings.ndim != 3 or target_embeddings.shape[1] != 2
++                or target_embeddings.shape[-1] != self.hidden_size):
++            return target_embeddings
++        marker = route_switch_active.to(
++            device=target_embeddings.device, dtype=target_embeddings.dtype
++        ).unsqueeze(-1)
++        return target_embeddings + marker * self.delta_switch.to(
++            device=target_embeddings.device, dtype=target_embeddings.dtype
++        ).view(1, 1, -1)
++
++
+ class DrivingAdaptor(nn.Module):
+     def __init__(self, 
+                 hidden_size: int, 
+@@ -375,4 +411,4 @@ def _gather_from_dict(d: Dict[str, Tensor], prefix: str):
+     for k, v in d.items():
+         if k.startswith(prefix):
+             out[k[len(prefix) :]] = v
+-    return out
+\ No newline at end of file
++    return out
+diff --git a/simlingo_training/models/driving.py b/simlingo_training/models/driving.py
+index e9f8bf4..715a8d3 100644
+--- a/simlingo_training/models/driving.py
++++ b/simlingo_training/models/driving.py
+@@ -15,7 +15,13 @@ from torch.optim import AdamW
+ from hydra.utils import get_original_cwd
+ 
+ 
+-from simlingo_training.models.adaptors.adaptors import DrivingAdaptor, LanguageAdaptor, WaypointInputAdaptor, AdaptorList
++from simlingo_training.models.adaptors.adaptors import (
++    AdaptorList,
++    DrivingAdaptor,
++    LanguageAdaptor,
++    RouteSwitchResidualAdapter,
++    WaypointInputAdaptor,
++)
+ from simlingo_training.models.utils import summarise_losses
+ from simlingo_training.utils.custom_types import (DrivingExample, DrivingInput,
+                                                 DrivingLabel, DrivingOutput,
+@@ -95,6 +101,22 @@ class DrivingModel(pl.LightningModule):
+             # norm_layer=NormZeroOne(min_max=(-32.0, 32.0)),
+         )
+ 
++        route_switch_cfg = cfg.get("route_switch_input_adapter", None)
++        route_switch_enabled = False
++        if route_switch_cfg is not None:
++            if isinstance(route_switch_cfg, dict):
++                route_switch_enabled = bool(route_switch_cfg.get("enabled", False))
++            else:
++                route_switch_enabled = bool(getattr(route_switch_cfg, "enabled", False))
++        # Disabled A0 does not instantiate or add a checkpoint tensor.
++        self.route_switch_adapter = (
++            RouteSwitchResidualAdapter(
++                hidden_size=self.language_model.hidden_size,
++                enabled=True,
++            )
++            if route_switch_enabled else None
++        )
++
+         if 'tokenizer' in self.processor.__dict__:
+             self.tokenizer = self.processor.tokenizer
+         else:
+@@ -122,6 +144,8 @@ class DrivingModel(pl.LightningModule):
+                     pixel_values = driving_input.camera_images,
+                     placeholder_values = driving_input.prompt_inference.placeholder_values,
+                     wp_encoder = self.wp_encoder,
++                    route_switch_adapter = self.route_switch_adapter,
++                    route_switch_active = driving_input.route_switch_active,
+                 )
+             
+             input_embeds_all = adaptor_dict["language_inputs"]
+@@ -202,6 +226,8 @@ class DrivingModel(pl.LightningModule):
+             pixel_values = driving_input.camera_images,
+             placeholder_values = driving_input.prompt.placeholder_values,
+             wp_encoder = self.wp_encoder,
++            route_switch_adapter = self.route_switch_adapter,
++            route_switch_active = driving_input.route_switch_active,
+         )
+ 
+         position_ids = None
+diff --git a/simlingo_training/models/encoder/internvl2_model.py b/simlingo_training/models/encoder/internvl2_model.py
+index 58964e9..47347c5 100644
+--- a/simlingo_training/models/encoder/internvl2_model.py
++++ b/simlingo_training/models/encoder/internvl2_model.py
+@@ -24,6 +24,8 @@ class LingoInternVLModel(nn.Module):
+         return_dict: Optional[bool] = None,
+         placeholder_values: Optional[List[dict]] = None,
+         wp_encoder: Optional[nn.Module] = None,
++        route_switch_adapter: Optional[nn.Module] = None,
++        route_switch_active: Optional[torch.BoolTensor] = None,
+     ):
+         
+         if 'tokenizer' in self.processor.__dict__:
+@@ -83,6 +85,25 @@ class LingoInternVLModel(nn.Module):
+                 wp_embeds = wp_encoder(coords.unsqueeze(0)).squeeze(0)
+                 wp_embeds = torch.split(wp_embeds, coords_length_org)
+ 
++                target_point_token_id = self.tokenizer.convert_tokens_to_ids(
++                    '<TARGET_POINT>'
++                )
++                if route_switch_adapter is not None:
++                    adapted_wp_embeds = []
++                    for i, embed in enumerate(wp_embeds):
++                        batch_id, key_id = special_token_pos[i]
++                        special_id = special_ids[key_id].item()
++                        if special_id == target_point_token_id:
++                            marker = None
++                            if (isinstance(route_switch_active, torch.Tensor)
++                                    and route_switch_active.ndim >= 1):
++                                marker = route_switch_active[batch_id:batch_id + 1]
++                            embed = route_switch_adapter(
++                                embed.unsqueeze(0), marker
++                            ).squeeze(0)
++                        adapted_wp_embeds.append(embed)
++                    wp_embeds = tuple(adapted_wp_embeds)
++
+                 first_occurrences_filtered = [first_occurrences[i] for i in special_token_pos[:, 0]]
+ 
+                 for i, (pos, first_occurrence) in enumerate(zip(special_token_pos, first_occurrences_filtered)):
+@@ -142,4 +163,3 @@ class LingoInternVLModel(nn.Module):
+                 adaptor_dict['inputs'][b][:len(adaptor_dict['language_inputs'][b])-i] = inputs_embeds[b][i:]
+             
+         return adaptor_dict
+-            
+\ No newline at end of file
+diff --git a/simlingo_training/utils/custom_types.py b/simlingo_training/utils/custom_types.py
+index 889e33f..a5f033b 100644
+--- a/simlingo_training/utils/custom_types.py
++++ b/simlingo_training/utils/custom_types.py
+@@ -17,6 +17,17 @@ class DatasetOutput(NamedTuple):
+     dataset: Optional[str]
+     qa_templates: Optional[Tuple[str, str]] = None
+     eval_infos: Optional[Dict] = None
++    route_switch_active: Optional[bool] = None
++
++
++def normalize_route_switch_active(value) -> bool:
++    """Normalize dataset metadata to a fail-safe scalar marker."""
++    if isinstance(value, bool):
++        return value
++    if (isinstance(value, torch.Tensor) and value.dtype is torch.bool
++            and value.numel() == 1):
++        return bool(value.detach().cpu().item())
++    return False
+ 
+ class LanguageLabel(NamedTuple):
+     phrase_ids: Tensor  # [B, max(len(tokens))] int64
+@@ -49,6 +60,9 @@ class DrivingInput(NamedTuple):
+     target_point: torch.Tensor  # [B, 2] float32
+     prompt: LanguageLabel
+     prompt_inference: LanguageLabel
++    # DriveClarify V3: one map-agnostic transient event bit.  The optional
++    # default preserves every existing caller and is interpreted as false.
++    route_switch_active: Optional[torch.Tensor] = None  # bool [B, 1]
+ 
+ class DrivingLabel(NamedTuple):
+     waypoints: Tensor  # [B, F, 2] 11 future waypoints 0.2s apart
+@@ -61,4 +75,4 @@ class DrivingExample(NamedTuple):
+     driving_input: DrivingInput
+     driving_label: DrivingLabel
+     run_id: List[str]
+-    qa_templates: Optional[Tuple[str, str]] = None
+\ No newline at end of file
++    qa_templates: Optional[Tuple[str, str]] = None
+diff --git a/start_eval_simlingo.py b/start_eval_simlingo.py
+old mode 100644
+new mode 100755
+index 8905fc2..dd65fa6
+--- a/start_eval_simlingo.py
++++ b/start_eval_simlingo.py
+@@ -171,15 +171,15 @@ def kill_dead_jobs(jobs):
+ configs = [
+     {
+     "agent": "simlingo",
+-    "checkpoint": "/PATH/TO/REPO/outputs/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt",
++    "checkpoint": "/home/buaa/wrh/simlingo/outputs/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt",
+     "benchmark": "bench2drive",
+-    "route_path": "/PATH/TO/REPO/leaderboard/data/bench2drive_split",
++    "route_path": "/home/buaa/wrh/simlingo/leaderboard/data/bench2drive_split",
+     "seeds": [1,2,3], # TODO: change depending on how many eval seeds you wanna run (paper uses one eval seed on three train seeds)
+     "tries": 2,
+-    "out_root": "/PATH/TO/REPO/eval_results/Bench2Drive",
++    "out_root": "/home/buaa/wrh/simlingo/eval_results/Bench2Drive",
+     "carla_root": "~/software/carla0915",
+-    "repo_root": "/PATH/TO/REPO",
+-    "agent_file": "/PATH/TO/REPO/team_code/agent_simlingo.py",
++    "repo_root": "/home/buaa/wrh/simlingo",
++    "agent_file": "/home/buaa/wrh/simlingo/team_code/agent_simlingo.py",
+     "team_code": "team_code",
+     "agent_config": "not_used",
+     "username": "YOUR_USERNAME"
+@@ -302,4 +302,4 @@ while job_queue:
+         print(len(job_queue))
+         break
+ 
+-    time.sleep(10)
+\ No newline at end of file
++    time.sleep(10)
+diff --git a/team_code/agent_simlingo.py b/team_code/agent_simlingo.py
+index 4675d47..d331742 100644
+--- a/team_code/agent_simlingo.py
++++ b/team_code/agent_simlingo.py
+@@ -5,6 +5,7 @@ partially taken from https://github.com/autonomousvision/carla_garage/blob/leade
+ 
+ 
+ import importlib.util
++import hashlib
+ import json
+ import math
+ import os
+@@ -36,15 +37,42 @@ import scenario_logger
+ import team_code.transfuser_utils as t_u
+ from scenario_logger import ScenarioLogger
+ from simlingo_training.utils.custom_types import DrivingInput, LanguageLabel
++from simlingo_training.driveclarify_adaptation_contract import (
++    validate_route_switch_checkpoint_compatibility,
++)
+ from simlingo_training.utils.internvl2_utils import build_transform, dynamic_preprocess
+ from team_code.config_simlingo import GlobalConfig
+-from team_code.nav_planner import LateralPIDController, RoutePlanner
++from team_code.nav_planner import (
++    LateralPIDController,
++    RoutePlanner,
++    SimLingoOnlineRouteUpdateOwner,
++)
+ from team_code.simlingo_utils import (
+     get_camera_extrinsics,
+     get_camera_intrinsics,
+     get_rotation_matrix,
+     project_points,
+ )
++from team_code.route_switch_adapter import RouteSwitchEventLifecycle
++# DriveClarify CP0 runtime probe (default-OFF, read-only; see driveclarify_probe_hook.py).
++try:
++    from team_code.driveclarify_probe_hook import build_runtime_probe as _dc_build_runtime_probe
++except Exception:  # noqa: BLE001 - probe must never break baseline import
++    def _dc_build_runtime_probe(agent=None):  # type: ignore
++        class _Inert:
++            enabled = False
++            def on_tick(self, *a, **k): pass
++            def prepare_model_input(self, model_input): return model_input
++            def on_model_output(self, *a, **k): pass
++            def select_plan_source(self, baseline_route, baseline_speed, *a, **k):
++                return baseline_route, baseline_speed
++            def on_pid_invocation(self, *a, **k): pass
++            def on_candidate_set(self, *a, **k): pass
++            def on_m2b_decision(self, *a, **k): pass
++            def on_baseline_control(self, *a, **k): pass
++            def commit(self, *a, **k): pass
++            def close(self, *a, **k): pass
++        return _Inert()
+ 
+ # Configure pytorch for maximum performance
+ torch.backends.cuda.matmul.allow_tf32 = True
+@@ -150,6 +178,15 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+             cfg = OmegaConf.load(file)
+         self.cfg = cfg
+         self.cfg.model.vision_model.use_global_img = cfg.data_module.use_global_img
++        route_switch_cfg = getattr(self.cfg.model, "route_switch_input_adapter", None)
++        if isinstance(route_switch_cfg, dict):
++            self._route_switch_adapter_enabled = bool(
++                route_switch_cfg.get("enabled", False)
++            )
++        else:
++            self._route_switch_adapter_enabled = bool(
++                getattr(route_switch_cfg, "enabled", False)
++            ) if route_switch_cfg is not None else False
+     
+         processor = AutoProcessor.from_pretrained(cfg.model.vision_model.variant, trust_remote_code=True)
+         if 'tokenizer' in processor.__dict__:
+@@ -170,7 +207,25 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+                 _recursive_=False
+             ).to(self.device)
+         torch.set_default_dtype(default_dtype)
+-        self.model.load_state_dict(torch.load(self.config_path))
++        checkpoint_state = torch.load(self.config_path)
++        if self._route_switch_adapter_enabled:
++            incompatible = self.model.load_state_dict(checkpoint_state, strict=False)
++            try:
++                validate_route_switch_checkpoint_compatibility(
++                    incompatible.missing_keys, incompatible.unexpected_keys
++                )
++            except ValueError as error:
++                raise RuntimeError("ROUTE_SWITCH_CHECKPOINT_COMPATIBILITY_MISMATCH")
++            delta_bytes = (
++                self.model.route_switch_adapter.delta_switch.detach()
++                .contiguous().cpu().view(torch.uint8).numpy().tobytes()
++            )
++            self._route_switch_parameter_sha256 = hashlib.sha256(
++                delta_bytes
++            ).hexdigest()
++        else:
++            self.model.load_state_dict(checkpoint_state)
++            self._route_switch_parameter_sha256 = None
+         self.iter = self.config_path.split("epoch=")[-1].split("/")[0]
+         self.session = self.config_path.split("/")[-4]
+         
+@@ -290,8 +345,93 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+         self._route_planner = RoutePlanner(self.route_planner_min_distance, self.route_planner_max_distance,
+                                                                              self.lat_ref, self.lon_ref)
+         self._route_planner.set_route(self._global_plan, True)
++        _dc_startup_world_xyz = np.array(
++            [
++                self._global_plan_world_coord[0][0].location.x,
++                self._global_plan_world_coord[0][0].location.y,
++                self._global_plan_world_coord[0][0].location.z,
++            ],
++            dtype=np.float64,
++        )
++        _dc_startup_planner_xyz = np.asarray(
++            self._route_planner.route[0][0], dtype=np.float64
++        )
++        _dc_world_to_planner_translation_xyz_m = (
++            _dc_startup_planner_xyz - _dc_startup_world_xyz
++        )
++        if not np.isfinite(_dc_world_to_planner_translation_xyz_m).all():
++            raise RuntimeError('WORLD_TO_ROUTE_PLANNER_TRANSLATION_INVALID')
++        self._world_to_route_planner_translation_xyz_m = np.copy(
++            _dc_world_to_planner_translation_xyz_m
++        )
++        self._latest_route_planner_endpoint = None
++        # One production online navigation owner.  It installs only traces that
++        # the existing CarlaDataProvider._grp has already computed; it never plans.
++        self._online_route_update_owner = SimLingoOnlineRouteUpdateOwner(
++            self._route_planner,
++            self.org_dense_route_world_coord[-1][0].location,
++            self._online_route_live_ego_endpoint,
++            self._online_route_cache_snapshot,
++            self._reset_online_route_navigation_caches,
++            self._restore_online_route_navigation_caches,
++            world_to_planner_translation_xyz_m=(
++                _dc_world_to_planner_translation_xyz_m
++            ),
++        )
++        self.driveclarify_candidate_local_route_owner = (
++            self._online_route_update_owner
++        )
++        self._route_switch_lifecycle = RouteSwitchEventLifecycle(
++            enabled=self._route_switch_adapter_enabled,
++            duration_outer_forwards=16,
++            parameter_sha256=self._route_switch_parameter_sha256,
++        )
+         self.initialized = True
+         self.metric_info = {}
++        # DriveClarify CP0 probe: default-OFF factory; inert unless env-enabled.
++        self._dc_probe = _dc_build_runtime_probe(self)
++
++    def _online_route_live_ego_endpoint(self):
++        # Reconnection originates at the simulator-owned hero location, then
++        # uses the same bound translation as the installed planner route.
++        try:
++            from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
++            hero = CarlaDataProvider.get_hero_actor()
++            location = hero.get_location()
++            world_xyz = np.array(
++                [location.x, location.y, location.z], dtype=np.float64
++            )
++            return (
++                world_xyz + self._world_to_route_planner_translation_xyz_m
++            )
++        except (AttributeError, ImportError, RuntimeError, TypeError, ValueError):
++            pass
++        if self._latest_route_planner_endpoint is None:
++            raise RuntimeError('LIVE_EGO_ENDPOINT_UNAVAILABLE')
++        return np.copy(self._latest_route_planner_endpoint)
++
++    def _online_route_cache_snapshot(self):
++        return {
++            'last_command': self.last_command,
++            'last_command_tmp': self.last_command_tmp,
++            # Reset replaces these objects rather than mutating them, so keeping
++            # the exact references permits identity-preserving rollback.
++            'commands': self.commands,
++            'target_point_prev': self.target_point_prev,
++        }
++
++    def _reset_online_route_navigation_caches(self, first_command):
++        command_value = first_command.value
++        self.last_command = first_command
++        self.last_command_tmp = first_command
++        self.commands = deque((command_value, command_value), maxlen=2)
++        self.target_point_prev = np.array([1.0e5, 1.0e5, 1.0e5])
++
++    def _restore_online_route_navigation_caches(self, snapshot):
++        self.last_command = snapshot['last_command']
++        self.last_command_tmp = snapshot['last_command_tmp']
++        self.commands = snapshot['commands']
++        self.target_point_prev = snapshot['target_point_prev']
+ 
+     def sensors(self):
+         sensors = []
+@@ -433,11 +573,20 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+             result['gps'] = filtered_state[0:2]
+         else:
+             result['gps'] = np.array([gps_pos[0], gps_pos[1]])
++
++        # Latest live ego endpoint in the SimLingo route-planner frame.
++        # The online route owner reads this only when a selected branch commits.
++        self._latest_route_planner_endpoint = np.array(
++            [result['gps'][0], result['gps'][1], gps_pos[2]], dtype=np.float64
++        )
+             
+         speed = round(input_data['speed'][1]['speed'], 1)
+ 
+         waypoint_route = self._route_planner.run_step(np.append(result['gps'], gps_pos[2]))
+ 
++        if not waypoint_route and getattr(self._dc_probe, 'enabled', False):
++            raise RuntimeError('METHOD_V3_CONNECTOR_TARGET_ACTIVE_ROUTE_EMPTY')
++
+         if len(waypoint_route) > 2:
+             target_point, far_command = waypoint_route[1]
+             next_target_point, next_far_command = waypoint_route[2]
+@@ -447,6 +596,22 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+         else:
+             target_point, far_command = waypoint_route[0]
+             next_target_point, next_far_command = waypoint_route[0]
++
++        # DriveClarify Method V3 R1 (default-OFF): during the bounded selected
++        # connector phase only, re-own the same two target slots with existing
++        # active-route rows. No route/planner/model/control call is introduced.
++        (
++            (target_point, far_command),
++            (next_target_point, next_far_command),
++        ) = self._dc_probe.select_connector_target_window(
++            waypoint_route,
++            np.append(result['gps'], gps_pos[2]),
++            (
++                (target_point, far_command),
++                (next_target_point, next_far_command),
++            ),
++            input_data=input_data,
++        )
+             
+             
+         if self.last_command_tmp != far_command:
+@@ -678,12 +843,52 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+ 
+         # Need to run this every step for GPS filtering
+         tick_data = self.tick(input_data)
++        # DriveClarify P0 (read-only): observe existing tick output. No re-run.
++        self._dc_probe.on_tick(input_data, tick_data, timestamp)
++
++        receipt = self._online_route_update_owner.active_consumption_receipt()
++        lifecycle_state = None
++        if isinstance(receipt, dict):
++            lifecycle_state = {
++                "committed": receipt.get("committed"),
++                "generation_number": self._route_planner.online_update_generation,
++                "installed_route_identity": receipt.get("installed_route_identity"),
++                "active_route_identity": self._online_route_update_owner.active_route_identity,
++                "consumed_route_identity": (
++                    self._online_route_update_owner.next_tick_consumed_route_identity
++                ),
++                "transaction_id": receipt.get("transaction_id"),
++            }
++        route_switch_active = self._route_switch_lifecycle.before_outer_forward(
++            lifecycle_state
++        )
++        self.driveclarify_route_switch_adapter_receipt_json = (
++            self._route_switch_lifecycle.receipt_json()
++        )
++        self.DrivingInput["route_switch_active"] = torch.tensor(
++            [[route_switch_active]], dtype=torch.bool, device=self.device
++        )
+ 
+         # initialize DrivingInput with dict self.DrivingInput
+         model_input = DrivingInput(**self.DrivingInput)
++        # DriveClarify Method V2 (default-OFF): only rewrites the input consumed by
++        # this existing normal forward; it never invokes model/PID/planner itself.
++        model_input = self._dc_probe.prepare_model_input(model_input)
++        _dc_model_t0 = time.monotonic()
+         pred_speed_wps, pred_route, language = self.model(model_input)
+         pred_speed_wps = pred_speed_wps.float() if pred_speed_wps is not None else None
+         pred_route = pred_route.float() if pred_route is not None else None
++        _dc_model_t1 = time.monotonic()
++        # DriveClarify P1 (read-only): observe the SAME forward's outputs. No second forward.
++        self._dc_probe.on_model_output(pred_route, pred_speed_wps, _dc_model_t0, _dc_model_t1)
++        # DriveClarify P1.5 (read-only): capture the planner frontier candidates after P1,
++        # before final control commitment and without invoking any new compute.
++        self._dc_probe.on_candidate_set(getattr(self._route_planner, "route", None), time.monotonic())
++        # DriveClarify Stage 2 (default-OFF): select exactly one authorized plan
++        # source before the sole existing PID invocation.
++        pred_route, pred_speed_wps = self._dc_probe.select_plan_source(
++            pred_route, pred_speed_wps, time.monotonic()
++        )
+ 
+         # prepare velocity input
+         gt_velocity = tick_data['speed']
+@@ -762,6 +967,7 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+             # save
+             image.save(f"{self.save_path_img}/{self.step}.png")
+             
++        self._dc_probe.on_pid_invocation(time.monotonic())
+         steer, throttle, brake = self.control_pid(pred_route, gt_velocity, pred_speed_wps)
+ 
+         # # 0.1 is just an arbitrary low number to threshold when the car is stopped
+@@ -797,6 +1003,14 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+                 json.dump(self.metric_info, outfile, indent=4)
+                 outfile.close()
+ 
++        # DriveClarify P1.7 (read-only): snapshot final M2B decision inputs/outputs.
++        self._dc_probe.on_m2b_decision(control, gt_velocity, time.monotonic())
++
++        # DriveClarify P2 (read-only): observe the baseline control actually returned,
++        # then commit this tick's record. Does not replace or mutate `control`.
++        self._dc_probe.on_baseline_control(control, gt_velocity, time.monotonic())
++        self._dc_probe.commit()
++
+         return control
+ 
+     def control_pid(self, route_waypoints, velocity, speed_waypoints):
+@@ -862,9 +1076,16 @@ class LingoAgent(autonomous_agent.AutonomousAgent):
+         Also writes logging files to disk.
+         """
+ 
++        # DriveClarify CP0 probe: flush/close (fail-open; no effect on baseline).
++        try:
++            if getattr(self, "_dc_probe", None) is not None:
++                self._dc_probe.close()
++        except Exception:  # noqa: BLE001
++            pass
++
+         del self.model
+         del self.config
+-        if self.cfg.data_module.encoder == 'llavanext':
++        if getattr(self.cfg.data_module, 'encoder', None) == 'llavanext':
+             del self.processor
+ 
+ 
+diff --git a/team_code/nav_planner.py b/team_code/nav_planner.py
+index 7967db5..b7fa685 100644
+--- a/team_code/nav_planner.py
++++ b/team_code/nav_planner.py
+@@ -3,8 +3,12 @@ Some helpful classes for planning and control for the privileged autopilot
+ """
+ 
+ import math
++import hashlib
++import json
++import threading
+ from copy import deepcopy
+ from collections import deque
++from dataclasses import dataclass
+ import xml.etree.ElementTree as ET
+ import numpy as np
+ import carla
+@@ -16,6 +20,149 @@ from scipy.spatial import cKDTree
+ 
+ from agents.navigation.global_route_planner import GlobalRoutePlanner
+ 
++
++class OnlineRouteUpdateError(ValueError):
++    """Fail-closed error raised before an active navigation route is changed."""
++
++
++def _endpoint_xyz(endpoint, label):
++    """Read a CARLA-style endpoint without changing its coordinate frame."""
++    try:
++        values = (
++            float(endpoint.x),
++            float(endpoint.y),
++            float(getattr(endpoint, 'z', 0.0)),
++        )
++    except (AttributeError, TypeError, ValueError):
++        try:
++            values = tuple(float(value) for value in endpoint[:3])
++        except (IndexError, TypeError, ValueError) as error:
++            raise OnlineRouteUpdateError(label + '_INVALID') from error
++    if len(values) != 3 or not np.isfinite(np.asarray(values)).all():
++        raise OnlineRouteUpdateError(label + '_INVALID')
++    return np.asarray(values, dtype=np.float64)
++
++
++def _road_option_token(command):
++    value = getattr(command, 'value', None)
++    name = getattr(command, 'name', None)
++    if value is None and name is None:
++        raise OnlineRouteUpdateError('FRESH_ROUTE_ROAD_OPTION_INVALID')
++    return {'name': None if name is None else str(name), 'value': value}
++
++
++def _route_identity(route):
++    payload = []
++    for position, command in route:
++        payload.append({
++            'xyz_hex': [float(value).hex() for value in position],
++            'road_option': _road_option_token(command),
++        })
++    encoded = json.dumps(payload, sort_keys=True, separators=(',', ':')).encode('utf-8')
++    return hashlib.sha256(encoded).hexdigest()
++
++
++def _distance_digest(distances):
++    encoded = json.dumps(
++        [float(value).hex() for value in distances],
++        separators=(',', ':'),
++    ).encode('utf-8')
++    return hashlib.sha256(encoded).hexdigest()
++
++
++@dataclass(frozen=True)
++class PreparedRouteState:
++    """Fully validated state that can be installed without further computation."""
++
++    route: tuple
++    route_distances: tuple
++    route_identity: str
++    road_option_sequence_digest: str
++    geometry_digest: str
++
++
++class RouteTraceConverter(object):
++    """Pure representation conversion from a GRP trace to SimLingo route rows."""
++
++    @staticmethod
++    def convert(fresh_route, world_to_planner_translation_xyz_m=None):
++        if isinstance(fresh_route, (str, bytes, bytearray)):
++            raise OnlineRouteUpdateError('FRESH_ROUTE_INVALID')
++        try:
++            rows = tuple(fresh_route)
++        except TypeError as error:
++            raise OnlineRouteUpdateError('FRESH_ROUTE_INVALID') from error
++        if not rows:
++            raise OnlineRouteUpdateError('FRESH_ROUTE_EMPTY')
++
++        if world_to_planner_translation_xyz_m is None:
++            translation = np.zeros(3, dtype=np.float64)
++        else:
++            try:
++                translation = np.asarray(
++                    world_to_planner_translation_xyz_m, dtype=np.float64
++                )
++            except (TypeError, ValueError) as error:
++                raise OnlineRouteUpdateError(
++                    'WORLD_TO_ROUTE_PLANNER_TRANSLATION_INVALID'
++                ) from error
++            if translation.shape != (3,) or not np.isfinite(translation).all():
++                raise OnlineRouteUpdateError(
++                    'WORLD_TO_ROUTE_PLANNER_TRANSLATION_INVALID'
++                )
++
++        converted = []
++        road_options = []
++        geometry = []
++        for row in rows:
++            if not isinstance(row, (tuple, list)) or len(row) != 2:
++                raise OnlineRouteUpdateError('FRESH_ROUTE_ROW_INVALID')
++            waypoint, command = row
++            try:
++                location = waypoint.transform.location
++            except AttributeError as error:
++                # Existing sealed native routes are represented as
++                # ``(carla.Transform, RoadOption)`` rows, while GRP traces use
++                # ``(carla.Waypoint, RoadOption)``.  Both carry the same CARLA
++                # world location and are representation inputs to this one
++                # converter, not distinct planners or route-generation paths.
++                try:
++                    location = waypoint.location
++                except AttributeError:
++                    raise OnlineRouteUpdateError(
++                        'FRESH_ROUTE_WAYPOINT_INVALID'
++                    ) from error
++            position = (
++                _endpoint_xyz(location, 'FRESH_ROUTE_WAYPOINT') + translation
++            )
++            road_option = _road_option_token(command)
++            converted.append((position, command))
++            road_options.append(road_option)
++            geometry.append([float(value).hex() for value in position])
++
++        distances = [0.0]
++        for index in range(1, len(converted)):
++            delta = converted[index][0] - converted[index - 1][0]
++            distance = float(np.linalg.norm(delta[:2]))
++            if not math.isfinite(distance):
++                raise OnlineRouteUpdateError('FRESH_ROUTE_DISTANCE_INVALID')
++            distances.append(distance)
++
++        road_option_digest = hashlib.sha256(json.dumps(
++            road_options, sort_keys=True, separators=(',', ':')
++        ).encode('utf-8')).hexdigest()
++        geometry_digest = hashlib.sha256(json.dumps(
++            geometry, separators=(',', ':')
++        ).encode('utf-8')).hexdigest()
++        converted_tuple = tuple(converted)
++        return PreparedRouteState(
++            route=converted_tuple,
++            route_distances=tuple(distances),
++            route_identity=_route_identity(converted_tuple),
++            road_option_sequence_digest=road_option_digest,
++            geometry_digest=geometry_digest,
++        )
++
+ class PIDController(object):
+     """
+     PID controller
+@@ -164,6 +311,7 @@ class RoutePlanner(object):
+     """
+ 
+     def __init__(self, min_distance, max_distance, lat_ref=0.0, lon_ref=0.0):
++        self._route_lock = threading.RLock()
+         self.saved_route = deque()
+         self.route = deque()
+         self.saved_route_distances = deque()
+@@ -175,6 +323,9 @@ class RoutePlanner(object):
+         self.min_distance = min_distance
+         self.max_distance = max_distance
+         self.is_last = False
++        self.active_route_identity = None
++        self.last_consumed_route_identity = None
++        self.online_update_generation = 0
+ 
+         # self.mean = np.array([0.0, 0.0, 0.0])
+         # self.scale = np.array([111319.49082349832, 111319.49079327358, 1.0]) # previously: [111324.60662786, 111319.490945]
+@@ -201,9 +352,8 @@ class RoutePlanner(object):
+ 
+         return gps
+ 
+-    def set_route(self, global_plan, gps=False, carla_map=None):
+-        self.route.clear()
+-
++    def _prepare_startup_route(self, global_plan, gps=False, carla_map=None):
++        route = []
+         for pos, cmd in global_plan:
+             if gps:
+                 warnings.warn("deprecated", DeprecationWarning)
+@@ -214,50 +364,118 @@ class RoutePlanner(object):
+                 pos = np.array([pos.location.x, pos.location.y, pos.location.z])
+                 # pos -= self.mean
+ 
+-            self.route.append((pos, cmd))
++            if not np.isfinite(pos).all():
++                raise ValueError('ROUTE_POSITION_INVALID')
++            _road_option_token(cmd)
++            route.append((pos, cmd))
++
++        if not route:
++            raise ValueError('ROUTE_EMPTY')
+ 
+         if carla_map is not None:
+             for _ in range(50):
+-                loc = carla.Location(x=self.route[-1][0][0], y=self.route[-1][0][1], z=self.route[-1][0][2])
++                loc = carla.Location(x=route[-1][0][0], y=route[-1][0][1], z=route[-1][0][2])
+                 next_loc = carla_map.get_waypoint(loc).next(1)[0].transform.location
+                 next_loc = np.array([next_loc.x, next_loc.y, next_loc.z])
+-                self.route.append((next_loc, self.route[-1][1]))
++                route.append((next_loc, route[-1][1]))
+ 
+         # We do the calculations in the beginning once so that we don't have
+         # to do them every time in run_step
+-        self.route_distances.append(0.0)
+-        for i in range(1, len(self.route)):
+-            diff = self.route[i][0] - self.route[i - 1][0]
++        route_distances = [0.0]
++        for i in range(1, len(route)):
++            diff = route[i][0] - route[i - 1][0]
+             distance = (diff[0]**2 + diff[1]**2)**0.5
+-            self.route_distances.append(distance)
++            route_distances.append(float(distance))
++        route_tuple = tuple(route)
++        road_options = [_road_option_token(command) for _, command in route_tuple]
++        geometry = [[float(value).hex() for value in position] for position, _ in route_tuple]
++        return PreparedRouteState(
++            route=route_tuple,
++            route_distances=tuple(route_distances),
++            route_identity=_route_identity(route_tuple),
++            road_option_sequence_digest=hashlib.sha256(json.dumps(
++                road_options, sort_keys=True, separators=(',', ':')
++            ).encode('utf-8')).hexdigest(),
++            geometry_digest=hashlib.sha256(json.dumps(
++                geometry, separators=(',', ':')
++            ).encode('utf-8')).hexdigest(),
++        )
++
++    def _snapshot_route_state(self):
++        return {
++            'route': self.route,
++            'route_distances': self.route_distances,
++            'is_last': self.is_last,
++            'saved_route': self.saved_route,
++            'saved_route_distances': self.saved_route_distances,
++            'active_route_identity': self.active_route_identity,
++            'last_consumed_route_identity': self.last_consumed_route_identity,
++            'online_update_generation': self.online_update_generation,
++        }
++
++    def _restore_route_state(self, snapshot):
++        self.route = snapshot['route']
++        self.route_distances = snapshot['route_distances']
++        self.is_last = snapshot['is_last']
++        self.saved_route = snapshot['saved_route']
++        self.saved_route_distances = snapshot['saved_route_distances']
++        self.active_route_identity = snapshot['active_route_identity']
++        self.last_consumed_route_identity = snapshot['last_consumed_route_identity']
++        self.online_update_generation = snapshot['online_update_generation']
++
++    def _commit_prepared_route(self, prepared, online=False):
++        if not isinstance(prepared, PreparedRouteState):
++            raise TypeError('PREPARED_ROUTE_STATE_INVALID')
++        route = deque((np.copy(position), command) for position, command in prepared.route)
++        distances = deque(prepared.route_distances)
++        saved_route = deque((np.copy(position), command) for position, command in prepared.route)
++        saved_distances = deque(prepared.route_distances)
++        with self._route_lock:
++            self.route = route
++            self.route_distances = distances
++            self.is_last = False
++            if online:
++                # A later load() must never resurrect the pre-reconnect route.
++                self.saved_route = saved_route
++                self.saved_route_distances = saved_distances
++                self.online_update_generation += 1
++            self.active_route_identity = prepared.route_identity
++            self.last_consumed_route_identity = None
++
++    def set_route(self, global_plan, gps=False, carla_map=None):
++        """Install the one startup route without leaking prior derived state."""
++        prepared = self._prepare_startup_route(global_plan, gps, carla_map)
++        self._commit_prepared_route(prepared, online=False)
+ 
+     def run_step(self, gps):
+-        if len(self.route) <= 2:
+-            self.is_last = True
+-            return self.route
++        with self._route_lock:
++            self.last_consumed_route_identity = self.active_route_identity
++            if len(self.route) <= 2:
++                self.is_last = True
++                return self.route
+ 
+-        to_pop = 0
+-        farthest_in_range = -np.inf
+-        cumulative_distance = 0.0
+-        for i in range(1, len(self.route)):
+-            if cumulative_distance > self.max_distance:
+-                break
++            to_pop = 0
++            farthest_in_range = -np.inf
++            cumulative_distance = 0.0
++            for i in range(1, len(self.route)):
++                if cumulative_distance > self.max_distance:
++                    break
+ 
+-            cumulative_distance += self.route_distances[i]
++                cumulative_distance += self.route_distances[i]
+ 
+-            diff = self.route[i][0] - gps
+-            distance = (diff[0]**2 + diff[1]**2)**0.5
++                diff = self.route[i][0] - gps
++                distance = (diff[0]**2 + diff[1]**2)**0.5
+ 
+-            if farthest_in_range < distance <= self.min_distance:
+-                farthest_in_range = distance
+-                to_pop = i
++                if farthest_in_range < distance <= self.min_distance:
++                    farthest_in_range = distance
++                    to_pop = i
+ 
+-        for _ in range(to_pop):
+-            if len(self.route) > 2:
+-                self.route.popleft()
+-                self.route_distances.popleft()
++            for _ in range(to_pop):
++                if len(self.route) > 2:
++                    self.route.popleft()
++                    self.route_distances.popleft()
+ 
+-        return self.route
++            return self.route
+ 
+     def save(self):
+         # because self.route saves objects of traffic lights and traffic signs a deep copy is not possible
+@@ -277,6 +495,308 @@ class RoutePlanner(object):
+         self.is_last = False
+ 
+ 
++class SimLingoOnlineRouteUpdateOwner(object):
++    """The single public writer for SimLingo's online active navigation route.
++
++    Global route search remains owned by ``CarlaDataProvider._grp``.  This class
++    accepts only that planner's trace, converts it, validates the unchanged
++    mission endpoint, and installs all route-derived state between ticks.
++    """
++
++    def __init__(
++            self,
++            route_planner,
++            global_destination_endpoint,
++            live_ego_endpoint_getter,
++            cache_snapshot_getter,
++            cache_reset,
++            cache_restore,
++            world_to_planner_translation_xyz_m=None):
++        if not isinstance(route_planner, RoutePlanner):
++            raise TypeError('ONLINE_ROUTE_PLANNER_INVALID')
++        for callback, label in (
++                (live_ego_endpoint_getter, 'LIVE_EGO_ENDPOINT_GETTER'),
++                (cache_snapshot_getter, 'CACHE_SNAPSHOT_GETTER'),
++                (cache_reset, 'CACHE_RESET'),
++                (cache_restore, 'CACHE_RESTORE')):
++            if not callable(callback):
++                raise TypeError(label + '_INVALID')
++        self._route_planner = route_planner
++        self._global_destination_xyz = _endpoint_xyz(
++            global_destination_endpoint, 'GLOBAL_DESTINATION_ENDPOINT'
++        )
++        if world_to_planner_translation_xyz_m is None:
++            translation = np.zeros(3, dtype=np.float64)
++        else:
++            try:
++                translation = np.asarray(
++                    world_to_planner_translation_xyz_m, dtype=np.float64
++                )
++            except (TypeError, ValueError) as error:
++                raise TypeError(
++                    'WORLD_TO_ROUTE_PLANNER_TRANSLATION_INVALID'
++                ) from error
++            if translation.shape != (3,) or not np.isfinite(translation).all():
++                raise TypeError('WORLD_TO_ROUTE_PLANNER_TRANSLATION_INVALID')
++        self._world_to_planner_translation_xyz_m = np.copy(translation)
++        self._global_destination_planner_xyz = (
++            self._global_destination_xyz
++            + self._world_to_planner_translation_xyz_m
++        )
++        self._live_ego_endpoint_getter = live_ego_endpoint_getter
++        self._cache_snapshot_getter = cache_snapshot_getter
++        self._cache_reset = cache_reset
++        self._cache_restore = cache_restore
++        self._lock = threading.RLock()
++        self._global_destination_identity = None
++        self._last_installation_receipt = None
++        self._last_installation_error = None
++        self._online_writer_count = 1
++
++    @property
++    def online_writer_count(self):
++        return self._online_writer_count
++
++    @property
++    def global_destination_identity(self):
++        return self._global_destination_identity
++
++    @property
++    def global_destination_xyz(self):
++        return tuple(float(value) for value in self._global_destination_xyz)
++
++    @property
++    def world_to_planner_translation_xyz_m(self):
++        return tuple(
++            float(value) for value in self._world_to_planner_translation_xyz_m
++        )
++
++    def world_to_route_planner_xyz(self, endpoint):
++        """Translate one CARLA-world point into the active planner frame."""
++
++        return tuple(
++            float(value)
++            for value in (
++                _endpoint_xyz(endpoint, 'CARLA_WORLD_ENDPOINT')
++                + self._world_to_planner_translation_xyz_m
++            )
++        )
++
++    def route_planner_to_world_xyz(self, endpoint):
++        """Translate one active-planner point back into CARLA world."""
++
++        return tuple(
++            float(value)
++            for value in (
++                _endpoint_xyz(endpoint, 'ROUTE_PLANNER_ENDPOINT')
++                - self._world_to_planner_translation_xyz_m
++            )
++        )
++
++    @property
++    def last_installation_receipt(self):
++        if self._last_installation_receipt is None:
++            return None
++        return dict(self._last_installation_receipt)
++
++    @property
++    def last_installation_error(self):
++        if self._last_installation_error is None:
++            return None
++        return dict(self._last_installation_error)
++
++    @property
++    def active_route_identity(self):
++        return self._route_planner.active_route_identity
++
++    @property
++    def next_tick_consumed_route_identity(self):
++        return self._route_planner.last_consumed_route_identity
++
++    @property
++    def continuity_threshold_m(self):
++        return float(self._route_planner.min_distance)
++
++    def invalidate_nominal_route(self, nominal_route_identity):
++        """Acknowledge the navigation-context transition without clearing state.
++
++        The old route remains fully usable until a fresh trace passes every gate;
++        this makes planner/converter/continuity failures failure-atomic.
++        """
++        return isinstance(nominal_route_identity, str) and bool(
++            nominal_route_identity.strip()
++        )
++
++    def install_reconnected_route(
++            self,
++            fresh_route,
++            *,
++            global_destination_identity,
++            global_destination_planner_endpoint):
++        try:
++            result = self._install_reconnected_route(
++                fresh_route,
++                global_destination_identity=global_destination_identity,
++                global_destination_planner_endpoint=(
++                    global_destination_planner_endpoint
++                ),
++            )
++        except Exception as error:
++            self._last_installation_error = {
++                'error_type': type(error).__name__,
++                'message': str(error),
++                'active_route_identity': self._route_planner.active_route_identity,
++                'global_destination_identity': self._global_destination_identity,
++                'global_destination_xyz': list(self.global_destination_xyz),
++                'global_destination_planner_xyz': [
++                    float(value)
++                    for value in self._global_destination_planner_xyz
++                ],
++            }
++            raise
++        self._last_installation_error = None
++        return result
++
++    def _install_reconnected_route(
++            self,
++            fresh_route,
++            *,
++            global_destination_identity,
++            global_destination_planner_endpoint):
++        if not isinstance(global_destination_identity, str) or not (
++                global_destination_identity.strip()):
++            raise OnlineRouteUpdateError('GLOBAL_DESTINATION_IDENTITY_INVALID')
++
++        requested_destination = _endpoint_xyz(
++            global_destination_planner_endpoint, 'GLOBAL_DESTINATION_ENDPOINT'
++        )
++        endpoint_delta = float(np.linalg.norm(
++            requested_destination - self._global_destination_planner_xyz
++        ))
++        # The public operand is explicitly in the active route-planner frame.
++        # Compare it to the pinned destination in that same frame; comparing it
++        # to ``_global_destination_xyz`` (CARLA world) creates a false endpoint
++        # change whenever the startup GPS conversion has a non-zero translation.
++        # Mission identity remains derived from coordinates rounded to millimetres.
++        if endpoint_delta > 1.0e-3:
++            raise OnlineRouteUpdateError('GLOBAL_DESTINATION_ENDPOINT_CHANGED')
++        if (
++                self._global_destination_identity is not None
++                and global_destination_identity != self._global_destination_identity):
++            raise OnlineRouteUpdateError('GLOBAL_DESTINATION_IDENTITY_CHANGED')
++
++        prepared = RouteTraceConverter.convert(
++            fresh_route,
++            self._world_to_planner_translation_xyz_m,
++        )
++        live_ego_endpoint = self._live_ego_endpoint_getter()
++        live_ego_xyz = _endpoint_xyz(live_ego_endpoint, 'LIVE_EGO_ENDPOINT')
++        ego_to_first = float(np.linalg.norm(
++            live_ego_xyz[:2] - prepared.route[0][0][:2]
++        ))
++        terminal_to_destination = float(np.linalg.norm(
++            prepared.route[-1][0][:2]
++            - self._global_destination_planner_xyz[:2]
++        ))
++        continuity_threshold = float(self._route_planner.min_distance)
++        if ego_to_first > continuity_threshold:
++            raise OnlineRouteUpdateError('FRESH_ROUTE_ORIGIN_DISCONTINUITY')
++        if terminal_to_destination > continuity_threshold:
++            raise OnlineRouteUpdateError('FRESH_ROUTE_DESTINATION_DISCONTINUITY')
++
++        old_route_identity = self._route_planner.active_route_identity
++        if prepared.route_identity == old_route_identity:
++            raise OnlineRouteUpdateError('FRESH_ROUTE_IDENTITY_UNCHANGED')
++        first_command = prepared.route[min(1, len(prepared.route) - 1)][1]
++
++        with self._lock, self._route_planner._route_lock:
++            planner_snapshot = self._route_planner._snapshot_route_state()
++            cache_snapshot = self._cache_snapshot_getter()
++            destination_identity_snapshot = self._global_destination_identity
++            receipt_snapshot = self._last_installation_receipt
++            try:
++                self._route_planner._commit_prepared_route(prepared, online=True)
++                self._cache_reset(first_command)
++                self._global_destination_identity = global_destination_identity
++                self._last_installation_receipt = {
++                    'committed': True,
++                    'global_destination_identity_before': global_destination_identity,
++                    'global_destination_identity_after': self._global_destination_identity,
++                    'global_destination_xyz_before': list(self.global_destination_xyz),
++                    'global_destination_xyz_after': list(self.global_destination_xyz),
++                    'global_destination_planner_xyz': [
++                        float(value)
++                        for value in self._global_destination_planner_xyz
++                    ],
++                    'requested_destination_planner_xyz': [
++                        float(value) for value in requested_destination
++                    ],
++                    'global_destination_endpoint_distance_m': endpoint_delta,
++                    'active_route_identity_before': old_route_identity,
++                    'fresh_route_computed_identity': prepared.route_identity,
++                    'installed_route_identity': self._route_planner.active_route_identity,
++                    'next_tick_consumed_route_identity': None,
++                    'fresh_route_row_count': len(prepared.route),
++                    'fresh_route_road_option_sequence_digest': (
++                        prepared.road_option_sequence_digest
++                    ),
++                    'fresh_route_geometry_digest': prepared.geometry_digest,
++                    'source_route_coordinate_domain': 'CARLA_WORLD',
++                    'installed_route_coordinate_domain': (
++                        'SIMLINGO_ROUTE_PLANNER'
++                    ),
++                    'world_to_planner_transform': {
++                        'type': 'TRANSLATION_ONLY',
++                        'translation_xyz_m': list(
++                            self.world_to_planner_translation_xyz_m
++                        ),
++                        'axis_swap': False,
++                        'sign_change': False,
++                        'units': 'm',
++                    },
++                    'route_distances_digest_before': _distance_digest(
++                        planner_snapshot['route_distances']
++                    ),
++                    'route_distances_digest_after': _distance_digest(
++                        self._route_planner.route_distances
++                    ),
++                    'is_last_before': planner_snapshot['is_last'],
++                    'is_last_after': self._route_planner.is_last,
++                    'ego_to_first_route_point_distance_m': ego_to_first,
++                    'fresh_route_terminal_to_destination_distance_m': (
++                        terminal_to_destination
++                    ),
++                    'continuity_threshold_m': continuity_threshold,
++                    'online_route_owner_identity': (
++                        type(self).__module__ + '.' + type(self).__qualname__
++                    ),
++                    'online_route_writer_count': self._online_writer_count,
++                    'new_global_planner_count': 0,
++                    'model_forward_count': 0,
++                    'vehicle_control_write_count': 0,
++                }
++            except Exception:
++                self._route_planner._restore_route_state(planner_snapshot)
++                self._cache_restore(cache_snapshot)
++                self._global_destination_identity = destination_identity_snapshot
++                self._last_installation_receipt = receipt_snapshot
++                raise
++        return True
++
++    def active_consumption_receipt(self):
++        receipt = self.last_installation_receipt
++        if receipt is None:
++            return None
++        receipt['next_tick_consumed_route_identity'] = (
++            self._route_planner.last_consumed_route_identity
++        )
++        receipt['installed_equals_next_tick_consumed'] = (
++            receipt['installed_route_identity']
++            == receipt['next_tick_consumed_route_identity']
++        )
++        return receipt
++
++
+ def interpolate_trajectory(world_map, waypoints_trajectory, hop_resolution=1.0, max_len=400):
+     """
+     Given some raw keypoints interpolate a full dense trajectory to be used
+@@ -406,4 +926,4 @@ def _location_to_gps(lat_ref, lon_ref, location):
+     lat = 360.0 * math.atan(math.exp(my / (EARTH_RADIUS_EQUA * scale))) / math.pi - 90.0
+     z = location.z
+ 
+-    return {'lat': lat, 'lon': lon, 'z': z}
+\ No newline at end of file
++    return {'lat': lat, 'lon': lon, 'z': z}

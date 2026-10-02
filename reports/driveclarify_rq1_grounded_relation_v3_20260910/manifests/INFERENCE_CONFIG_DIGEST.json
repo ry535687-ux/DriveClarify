@@ -1,0 +1,62 @@
+{
+  "annotation_version": "AUTOMATED_LABEL_V1_PENDING_HUMAN_REVIEW",
+  "cache_key_fields": [
+    "observation_sha256",
+    "task_text",
+    "candidate_text",
+    "route_sha256",
+    "history_sha256",
+    "checkpoint_sha256",
+    "inference_mode",
+    "inference_parameters",
+    "processing_code_version"
+  ],
+  "checkpoint_digest_orientation_clue": "cc6873e2a7778140ff7af3fd7d3578114b26bd6a47974e955f0845ddd2178044",
+  "checkpoint_matches_orientation_clue": false,
+  "checkpoint_sha256": "ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28",
+  "code_version": "fcd8674ca9e593eeb7e0638801016be09cfaf7a4b272b1715f68634742756997",
+  "frozen_config": {
+    "grounding_threshold": 0.0,
+    "trajectory_horizon_s": 2.5,
+    "trajectory_step_s": 0.05,
+    "trajectory_threshold_m": 0.1
+  },
+  "m2_status": {
+    "counted_as_strong_baseline": false,
+    "method": "M2_GROUNDING_CONFIDENCE",
+    "reason_code": "NO_FROZEN_GROUNDING_SCORER_FOR_MAP_ATTRIBUTE_REFERRING_EXPRESSIONS",
+    "reason_zh": "本轮候选是公开地图属性指代表达（更长的路 / 弯度更小的连接器）。现有冻结 SimLingo 只输出轨迹，不输出候选指代对象的可信度分数；唯一对象级真值来自被 §3 禁止的 CARLA 真值位置。用轨迹构造分数会退化为 M3。",
+    "score_constructed_from_high_low_or_correct_binding": false,
+    "score_fabricated_from_constants_or_random": false,
+    "status": "NOT_IMPLEMENTED"
+  },
+  "m_lex_status": {
+    "inputs_not_read": [
+      "observation_rgb",
+      "public_map_topology",
+      "ego_state",
+      "route_context",
+      "runtime_task_state",
+      "candidate_future_trajectories"
+    ],
+    "inputs_read": [
+      "candidate_texts"
+    ],
+    "interpretation": "若其平衡正确率与 M4/M5 相同，则该轮真值可由候选文本词法读出，主结果不具 grounding 含义。",
+    "method": "M_LEX_CONTROL",
+    "role": "TAUTOLOGY_DETECTOR_NOT_A_SCIENTIFIC_BASELINE"
+  },
+  "orientation_clue_note_zh": "用户 §8 给出的线索摘要与本机实际 checkpoint 文件不符。如实记录实际值，不修改文件以凑旧摘要。",
+  "reuse_note_zh": "不复用 v2 的 A1/B1 plan：那会让候选文本与实际注入文本不一致。",
+  "reused_previous_round_plans": false,
+  "schema_version": "driveclarify.rq1_v3_inference_config_digest.v1",
+  "shared_across_candidates_zh": "两候选共享同一 RGB、自车状态、路线、历史、权重、模式、解码协议；只有解释文本不同。",
+  "threshold_calibration": {
+    "frozen_before_test_scoring": true,
+    "grid_m": null,
+    "objective": "DEV_BALANCED_ACCURACY_OF_M3_TRAJECTORY_ONLY",
+    "selected_on_split": "DEV",
+    "selected_threshold_m": 0.1,
+    "tie_rule": "PREFER_SMALLEST_THRESHOLD_AMONG_MAXIMUM_DEV_BALANCED_ACCURACY"
+  }
+}
