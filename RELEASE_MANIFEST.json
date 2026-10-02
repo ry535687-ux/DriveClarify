@@ -5148,8 +5148,8 @@
     },
     {
       "path": "requirements/paper.lock.txt",
-      "bytes": 21030,
-      "sha256": "68774bd6e2973aa200b00651216117728896c4d2fe17aa195bc0cf1c41d116f4"
+      "bytes": 30875,
+      "sha256": "39caf667d9740eab73a944d4f18b6d815c832f466950c3a7ca2dfe7a6bfafcb3"
     },
     {
       "path": "requirements/paper.txt",
