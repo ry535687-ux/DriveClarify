@@ -17,9 +17,10 @@ while [[ $# -gt 0 ]]; do
 done
 cd "$repro_root"
 if [[ ! -x "$repro_venv/bin/python" ]]; then
-  "$repro_python" -c 'import sys; assert sys.version_info >= (3, 10), "需要 Python 3.10+"'
+  "$repro_python" -c 'import sys; assert sys.version_info[:2] == (3, 13), "论文逐字节复现需要 Python 3.13，可用 --python python3.13 指定"'
   "$repro_python" -m venv "$repro_venv"
 fi
+"$repro_venv/bin/python" -c 'import sys; assert sys.version_info[:2] == (3, 13), "论文逐字节复现需要 Python 3.13"'
 if [[ $repro_install == 1 ]]; then
   "$repro_venv/bin/python" -m pip install --disable-pip-version-check \
     --require-hashes --only-binary=:all: -r requirements/paper.lock.txt

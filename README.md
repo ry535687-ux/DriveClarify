@@ -30,16 +30,18 @@ cd DriveClarify
 bash reproduce.sh
 ```
 
-脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 305 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
+一键脚本需要 **Python 3.13**（可用 `bash reproduce.sh --python python3.13` 指定）。脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 305 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
 
 容器方式：
 
 ```bash
-docker build -f Dockerfile.cpu -t driveclarify-cpu .
-docker run --rm -v "$PWD/build:/workspace/DriveClarify/build" driveclarify-cpu
+docker build --network=host -f Dockerfile.cpu -t driveclarify-cpu .
+mkdir -p build
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD/build:/workspace/DriveClarify/build" driveclarify-cpu
 ```
 
-以下命令在仓库根目录运行。CPU 依赖使用 Python **3.10+**，本机已验证版本为 **3.13.5**。CARLA / SimLingo 使用独立的 Python 3.8 环境。
+以下命令在仓库根目录运行。CPU 合同测试支持 Python **3.10+**；论文参考输出的逐字节复现固定使用 **Python 3.13**，本机已验证版本为 **3.13.5**。CARLA / SimLingo 使用独立的 Python 3.8 环境。
 
 ```bash
 python3 -m venv .venv
@@ -128,7 +130,7 @@ python engineering/reproduce.py inventory --output build/inventory.json
 python engineering/reproduce.py export --output build/github-preview-001
 ```
 
-开发约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，GitHub 上传流程见[发布指南](engineering/PUBLISHING.md)。[GitHub Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的 CPU 测试与离线复现；请以具体运行记录为准。
+开发约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，GitHub 上传流程见[发布指南](engineering/PUBLISHING.md)。[GitHub Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的 CPU 测试，并在 Python 3.13 重现论文参考输出；请以具体运行记录为准。
 
 ## 第三方与许可
 

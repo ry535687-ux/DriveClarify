@@ -110,9 +110,10 @@ def doctor(root, args):
     if args.profile == "native":
         return native_doctor(root, args)
     checks = dependencies(args.profile)
-    # paper 锁定依赖 NumPy 2.1，需要 Python >= 3.10；不代表原生环境版本。
-    checks.append({"dependency": "python>=3.10", "version": sys.version.split()[0],
-                   "status": "PRESENT" if sys.version_info >= (3, 10) else "MISSING"})
+    required = "python3.13" if args.profile == "paper" else "python>=3.10"
+    supported = sys.version_info[:2] == (3, 13) if args.profile == "paper" else sys.version_info >= (3, 10)
+    checks.append({"dependency": required, "version": sys.version.split()[0],
+                   "status": "PRESENT" if supported else "MISSING"})
     if args.profile == "paper":
         try:
             manifest = verify_assets(root)
@@ -169,6 +170,8 @@ def native_doctor(root, args):
 
 
 def reproduce_paper(root, output):
+    if sys.version_info[:2] != (3, 13):
+        raise ValueError("论文参考输出的逐字节复现需要 Python 3.13；其他 CPU 测试支持 Python 3.10+")
     manifest = verify_assets(root)
     if any(d["status"] == "MISSING" for d in dependencies("paper")):
         raise ValueError("请先安装 requirements/paper.txt")

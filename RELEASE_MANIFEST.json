@@ -8,8 +8,8 @@
     },
     {
       "path": ".github/workflows/cpu.yml",
-      "bytes": 1083,
-      "sha256": "8c3976944d1c92caff5b98d5ed582b210aa89e60cc55dbda1dd6212dee03adba"
+      "bytes": 1124,
+      "sha256": "d1baf990934d1ced40b6563bd4ceaa40b45150465a0b4c4924e6ebbd9db70ed4"
     },
     {
       "path": ".gitignore",
@@ -33,8 +33,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8947,
-      "sha256": "094014bb26b716992981f5faced7db4ea426ac14a05f4ee6560fd8d6bf620daa"
+      "bytes": 9208,
+      "sha256": "74a6c83a4c38dacef5dc49cc742d05b02df5bd2ccb8bfe4326ccdd6929ac4212"
     },
     {
       "path": "configs/offline_v0_synthetic.yaml",
@@ -4058,13 +4058,13 @@
     },
     {
       "path": "engineering/PUBLISHING.md",
-      "bytes": 2925,
-      "sha256": "887565a57eb7e24c718b503a8024cd8bf92fbe35b7aab515872cbf215997962b"
+      "bytes": 2956,
+      "sha256": "87adf92b42d3bf806aaf26b4deca76517a26a6b748bb8a668bf1090747190076"
     },
     {
       "path": "engineering/REPRODUCING.md",
-      "bytes": 10325,
-      "sha256": "3e017109b77d3ce1600cd866ef844b4b6fddf0f701529a7d4c6dbeea04dc6722"
+      "bytes": 10591,
+      "sha256": "2c5678345d58cd7c8b65e739136b4d419160ba1aaa510f5eb532b73f7e1703b0"
     },
     {
       "path": "engineering/assets.py",
@@ -4118,8 +4118,8 @@
     },
     {
       "path": "engineering/reproduce.py",
-      "bytes": 15146,
-      "sha256": "b41543f4596836f705f003b422e094e21b6e3dc4ef4253a471cff2f7d8d27556"
+      "bytes": 15375,
+      "sha256": "d17e15cdc11578a819483bd0011882bd09e6d522a09357a019f22ff94a8ddc9c"
     },
     {
       "path": "engineering/vendor/simlingo-extra/simlingo_training/config/driveclarify_route_switch_v1.yaml",
@@ -5133,8 +5133,8 @@
     },
     {
       "path": "reproduce.sh",
-      "bytes": 1328,
-      "sha256": "13b65e38676e08c5c36c2d8a03b1411a575e83e79696f6d43d6bdcf97030804e"
+      "bytes": 1512,
+      "sha256": "4b9139acc125532e7d0c9c7f82d40426f79f7fe8c240d9c5b04a9330b6980367"
     },
     {
       "path": "requirements/cpu.txt",

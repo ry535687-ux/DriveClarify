@@ -35,6 +35,6 @@ gh release upload v0.1.0-assets build/release-assets/* \
 
 ## 检查实际结果
 
-[CPU Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的测试与论文重算。只有具体运行通过后才报告远程 CI 成功。Release 上传后还需实际访问公开资产并验证下载，不能将本地打包成功写成远程发布成功。
+[CPU Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的合同测试，并在 Python 3.13 进行论文重算。只有具体运行通过后才报告远程 CI 成功。Release 上传后还需实际访问公开资产并验证下载，不能将本地打包成功写成远程发布成功。
 
 许可证、作者与论文信息由维护者确定；当前未自动添加 MIT / Apache 或推定第三方资产的再分发许可。原生闭环资格和外部最终逐路线记录的缺口在复现文档保留，不能通过改动历史证据消除。
