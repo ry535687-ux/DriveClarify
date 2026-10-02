@@ -28,8 +28,8 @@
     },
     {
       "path": "GIT_TRACKING_MANIFEST.md",
-      "bytes": 2237,
-      "sha256": "54fc6abd76a6b0adef3858ab4b67099683619e975253757897c82f595cc6d4bc"
+      "bytes": 2467,
+      "sha256": "618d50dfbfd9f18fa5760bb446463a804542c6fde23c24b3f59f42089ce29167"
     },
     {
       "path": "README.md",
@@ -4063,8 +4063,8 @@
     },
     {
       "path": "engineering/REPRODUCING.md",
-      "bytes": 10591,
-      "sha256": "2c5678345d58cd7c8b65e739136b4d419160ba1aaa510f5eb532b73f7e1703b0"
+      "bytes": 10690,
+      "sha256": "3b56de60fd799ff0da166d9ea324465b1c46090a2b43d3451f52169ddbed2e30"
     },
     {
       "path": "engineering/assets.py",

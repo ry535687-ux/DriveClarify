@@ -33,7 +33,7 @@ deliverables/paper_revision_20260915/analyze.py closed-loop
 
 `REPRODUCTION_RECEIPT.json` 的 `PASS` 只表示这些冻结数据上的输出重现；不包含新训练、视觉模型前向、原始数据重新采集或新驾驶。参考结果不自动更新；若更换 NumPy / SciPy 导致数值序列或序列化变化，应检查差异，不能直接刷新摘要消除失败。
 
-`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，305 项测试与 14 个参考输出均通过。远程 Python 3.10 的 CPU 合同测试已通过，但论文参考输出的逐字节检查未通过，因此论文复现明确固定使用 Python 3.13；不通过修改参考摘要或放宽比较消除差异。CI 在两种 Python 上运行合同测试，在 Python 3.13 上运行完整论文重算。容器构建按实际结果报告。
+`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，305 项测试与 14 个参考输出均通过。远程 Python 3.10 的 CPU 合同测试已通过，但论文参考输出的逐字节检查未通过，因此论文复现明确固定使用 Python 3.13；不通过修改参考摘要或放宽比较消除差异。CI 在两种 Python 上运行合同测试，在 Python 3.13 上运行完整论文重算。Linux CPU 容器已用 `--network=host` 完成干净安装、305 项测试、49 个合成案例及 14 个参考输出逐字节比对。
 
 ## 原生环境与模型
 

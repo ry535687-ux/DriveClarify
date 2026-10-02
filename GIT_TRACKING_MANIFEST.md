@@ -4,7 +4,7 @@
 
 ## 当前工程化范围（2026-10-02）
 
-用户当前要求按完整实验复现整理本地。新增根 README、贡献说明、依赖文件、
+用户当前要求按完整实验复现工程化，并上传到公开 GitHub 仓库。新增根 README、贡献说明、依赖文件、
 测试配置、CPU CI 与 `engineering/`。`engineering/reproduce.py export` 通过
 显式模式与资产清单生成本地发布预览，收录当前实验源码、必要离线数据及
 原生协议；不默认复制全部报告、原始运行、模型、私人文档或本机配置。
@@ -12,9 +12,9 @@
 外部 SimLingo 仓库仍只读。当前本地修改的补丁和四个附加源文件保存于
 `engineering/vendor/`，供新的独立克隆还原；没有修改外部原工作区。
 
-此更新不是已经提交或上传的记录，也不声明完整 CARLA 数据已经发布。
+源码已通过 GitHub 插件发布到 [ry535687-ux/DriveClarify](https://github.com/ry535687-ux/DriveClarify)。原研究目录的 Git 历史未改写；大模型和归档已在本地打包，Release 上传等待 CLI 网页授权。完整 CARLA 新运行仍有已披露的资格与数据缺口。
 具体清单见 `engineering/paper_assets.json`、`engineering/native_assets.json`
-及导出时生成的 `RELEASE_MANIFEST.json`。后续 GitHub 提交操作见
+及导出时生成的 `RELEASE_MANIFEST.json`。发布和维护操作见
 `engineering/PUBLISHING.md`；仍禁止在研究工作区直接 `git add .`。
 
 ## 1. 仓库边界
