@@ -2,9 +2,14 @@
   "scope": "源代码及冻结离线复现数据；原生资产需另行提供",
   "files": [
     {
+      "path": ".gitattributes",
+      "bytes": 100,
+      "sha256": "76f08ab3442327c4f7fc3514d17ba40346f3c13d6efa0b67ee5e2dd9de2f3432"
+    },
+    {
       "path": ".github/workflows/cpu.yml",
-      "bytes": 1071,
-      "sha256": "1e5a673da1a7063310933d886dd65bb183c79d1e151c7ad832fa7d2047a9b988"
+      "bytes": 1083,
+      "sha256": "8c3976944d1c92caff5b98d5ed582b210aa89e60cc55dbda1dd6212dee03adba"
     },
     {
       "path": ".gitignore",
@@ -28,8 +33,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7555,
-      "sha256": "54451ccb39fd398182052dae681744a889aab723afbf393e3b0c006106fef564"
+      "bytes": 8947,
+      "sha256": "094014bb26b716992981f5faced7db4ea426ac14a05f4ee6560fd8d6bf620daa"
     },
     {
       "path": "configs/offline_v0_synthetic.yaml",
@@ -4053,13 +4058,18 @@
     },
     {
       "path": "engineering/PUBLISHING.md",
-      "bytes": 3139,
-      "sha256": "47a7897802273c0b3ccc932ab157f9f4c38789c343c551cbe3b65861708b9090"
+      "bytes": 2925,
+      "sha256": "887565a57eb7e24c718b503a8024cd8bf92fbe35b7aab515872cbf215997962b"
     },
     {
       "path": "engineering/REPRODUCING.md",
-      "bytes": 8894,
-      "sha256": "c71358a200d7ba30730f3326d448feee0de7f1b211ac918d39792118c4d057aa"
+      "bytes": 10325,
+      "sha256": "3e017109b77d3ce1600cd866ef844b4b6fddf0f701529a7d4c6dbeea04dc6722"
+    },
+    {
+      "path": "engineering/assets.py",
+      "bytes": 7626,
+      "sha256": "e54607d3faf1d4327e5092b9ccb88fe4a9d56b8e8aa9ca5852798dfb46f49b44"
     },
     {
       "path": "engineering/env/b2d-model-config.yaml",
@@ -4097,9 +4107,19 @@
       "sha256": "186ac03817689e3cec68d2bc80b4b37cb3797fb147dd53fa61267e6807bd0801"
     },
     {
+      "path": "engineering/prepare_native.py",
+      "bytes": 3298,
+      "sha256": "e3ebe14fc0eec5ac3b078b19f03270cf311443e18d59cdb530c2003991d91a80"
+    },
+    {
+      "path": "engineering/release_assets.json",
+      "bytes": 9424,
+      "sha256": "fefdcf30eb92742b1495ba1db79e8e903fc183ac015bf89987ed2fc9ab75e817"
+    },
+    {
       "path": "engineering/reproduce.py",
-      "bytes": 15128,
-      "sha256": "2895adbfa38d97d3dff06f3d95e1ce7fe37f31c513b01fe9975b5a99bbc21c16"
+      "bytes": 15146,
+      "sha256": "b41543f4596836f705f003b422e094e21b6e3dc4ef4253a471cff2f7d8d27556"
     },
     {
       "path": "engineering/vendor/simlingo-extra/simlingo_training/config/driveclarify_route_switch_v1.yaml",
@@ -5175,6 +5195,11 @@
       "path": "sitecustomize.py",
       "bytes": 568,
       "sha256": "fbcc5d967b025b4634ba5ccaf8e3f4595f9b675bfc4639ff8c801a4833ab5d97"
+    },
+    {
+      "path": "tests/engineering/test_assets.py",
+      "bytes": 2245,
+      "sha256": "1db20e4fc423d78cfe15b932e5c8cb5d6a33fe9296d34bcd15ed433e2dabef6f"
     },
     {
       "path": "tests/engineering/test_reproduce.py",

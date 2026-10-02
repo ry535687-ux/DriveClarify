@@ -250,7 +250,7 @@ def inventory(root, output):
 def export_source(root, output):
     assets = verify_assets(root)
     names = source_names(root) | {r["path"] for r in assets["files"]}
-    for pattern in ["README.md", "CONTRIBUTING.md", "pyproject.toml", ".gitignore", "reproduce.sh", "Dockerfile.cpu",
+    for pattern in ["README.md", "CONTRIBUTING.md", "pyproject.toml", ".gitignore", ".gitattributes", "reproduce.sh", "Dockerfile.cpu",
                     "GIT_TRACKING_MANIFEST.md", "requirements/*.txt", ".github/workflows/*.yml",
                     "engineering/**/*.md", "engineering/**/*.py", "engineering/**/*.json",
                     "engineering/**/*.patch", "engineering/**/*.yaml", "engineering/**/*.txt",

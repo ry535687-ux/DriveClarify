@@ -12,7 +12,7 @@
 
 ## CPU 论文复现
 
-按 README 安装 `requirements/paper.txt`，然后执行：
+按 README 安装 `requirements/paper.lock.txt`，然后执行：
 
 ```bash
 python engineering/reproduce.py doctor --profile paper
@@ -33,7 +33,7 @@ deliverables/paper_revision_20260915/analyze.py closed-loop
 
 `REPRODUCTION_RECEIPT.json` 的 `PASS` 只表示这些冻结数据上的输出重现；不包含新训练、视觉模型前向、原始数据重新采集或新驾驶。参考结果不自动更新；若更换 NumPy / SciPy 导致数值序列或序列化变化，应检查差异，不能直接刷新摘要消除失败。
 
-`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，301 项测试与 14 个参考输出均通过。Python 3.10 的远程 CI 和容器构建按各自实际结果报告。
+`requirements/paper.lock.txt` 锁定直接及传递依赖，并提供 PyPI 发布文件的 SHA-256；附 Python 3.10 和 Windows 的条件依赖。已在本机 Python 3.13.5 的新建虚拟环境执行干净安装，305 项测试与 14 个参考输出均通过。Python 3.10 的远程 CI 和容器构建按各自实际结果报告。
 
 ## 原生环境与模型
 
@@ -59,7 +59,20 @@ SimLingo 原生环境和 CPU 分析环境分别管理，避免 Python / NumPy / 
 - `vendor/simlingo-extra/`：四个新增 `.py` / `.yaml` 文件。
 - `native_assets.json`：还原后文件摘要、关键包版本、权重身份及协议入口。
 
-在另一个**新克隆**中还原，不要对现有研究工作区直接应用补丁。以下假定两个仓库为同级目录：
+优先使用下面的独立工作区准备命令（需要 Git；请把 CARLA 和 Python 路径换成目标机器的安装位置）：
+
+```bash
+python3 engineering/prepare_native.py --workspace build/native-workspace \
+  --carla-root /path/to/CARLA_0.9.15 \
+  --native-python /path/to/envs/simlingo/bin/python
+python3 engineering/assets.py --profile native --output build/native-workspace
+python engineering/reproduce.py doctor --profile native \
+  --paths build/native-workspace/paths.local.json --hash-weights
+```
+
+第一条命令只克隆、checkout、应用补丁和核对 20 个文件摘要，已用本地上游仓库验证；不安装原生依赖，也不启动驾驶。先执行准备命令，再执行模型下载，避免克隆目录预先非空。最后的 doctor 仍返回 2，表示原生运行资格未完成。
+
+也可手动在另一个**新克隆**中还原。以下假定两个仓库为同级目录：
 
 ```bash
 git clone https://github.com/RenzKa/simlingo.git ../simlingo-reproduction
@@ -80,7 +93,7 @@ cp -a engineering/vendor/simlingo-extra/. ../simlingo-reproduction/
 | `base_checkpoint` | 2569679322 | `ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28` | 原生公开任务初始化身份 |
 | `b2d_checkpoint` | 2569681502 | `cc6873e2a7778140ff7af3fd7d3578114b26bd6a47974e955f0845ddd2178044` | 冻结 Bench2Drive V2 的 A0/A1 共同权重 |
 
-这里的期望摘要来自原始冻结记录，本次没有默认读取约 5 GB 权重重新求摘要。`--hash-weights` 可显式执行流式 SHA-256；不反序列化模型。对应 Hydra 配置已按冻结摘要保存为 `env/base-model-config.yaml` 与 `env/b2d-model-config.yaml`；其中历史宿主路径仍需在目标环境的新副本中调整。权重、InternVL 模型缓存和 CARLA 额外地图应单独管理，不能上传到源码仓库。适配后的 B2D 权重尚无可供读者使用的下载地址；未来数据发布必须补充它及训练资产/选择记录。
+适配权重已在本机流式读取并验证冻结摘要；基础权重已核对公开上游 LFS 的 SHA-256 与字节数。`--hash-weights` 可显式执行流式 SHA-256；不反序列化模型。对应 Hydra 配置已按冻结摘要保存为 `env/base-model-config.yaml` 与 `env/b2d-model-config.yaml`；其中历史宿主路径仍需在目标环境的新副本中调整。权重与模型缓存的完整下载清单在 `release_assets.json`；下载及分片合并使用 `assets.py --profile native`。基础权重固定到 Hugging Face 提交 `26c7c89e797d4e25bbf640013317af8da26a5454`，InternVL2-1B 固定到 `0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187`，本机视觉大权重也已流式校验。适配权重、训练来源与历史记录已打包，GitHub Release 大文件上传等待网页授权。CARLA 服务端与额外地图仍按上游安装流程获取，不进入源码 Git 仓库。
 
 原生依赖预检：
 
@@ -105,12 +118,12 @@ python engineering/reproduce.py doctor --profile native --paths engineering/path
 
 历史 `scripts/run_full_bench2drive_unattended.sh` 会启动宿主 systemd 服务，工具中也有固定输出路径与恢复行为，不能直接作为新机器的快速开始命令。此次工程入口没有隐式原生运行分支。
 
-当前发布预览包含可复现离线输入与相关原生协议，**不是所有历史运行数据的备份**。尚缺的完整发布项是：适配权重的可获取地址与训练资产、各闭环场景和原始轨迹/RGB数据包、论文采用的外部 220 路线最终 A0/A1 逐路线结果，以及新的答案绑定运行资格。旧中途账本或名为 `FINAL_*` 的文件不能替代缺失的最终结果。
+当前发布预览包含可复现离线输入与相关原生协议，**不是所有历史运行数据的备份**。大文件归档提供本机已有的五组历史实验记录（4226 文件）及适配训练配置、输入、选择记录（503 文件）；真实相机画面只包含本机已有文件，不能补出未采集的画面。尚缺的完整复现项是：论文采用的外部 220 路线最终 A0/A1 逐路线结果、新答案绑定运行资格，以及所有历史入口的可迁移运行环境。旧中途账本或名为 `FINAL_*` 的文件不能替代缺失的最终结果。
 
 ## 图表与论文
 
-原论文分析脚本位于 `deliverables/paper_revision_20260915/`，当前 LaTeX 位于工作区 `paper_ieeeconf_en/`。论文已存在的源码包是该 deliverables 下的 `DriveClarify_8page_LaTeX.zip`。编译命令为在解压后的 `paper_ieeeconf_en/` 执行 `bash build.sh`；所需编译器与历史验证见同目录 `FINAL_REPORT.md`。
+原论文分析脚本位于 `deliverables/paper_revision_20260915/`，归档 LaTeX 位于 `deliverables/paper_revision_20260915/source_archive/paper_ieeeconf_en/`。论文已存在的源码包是该 deliverables 下的 `DriveClarify_8page_LaTeX.zip`。编译命令为在解压后的 `paper_ieeeconf_en/` 执行 `bash build.sh`；所需编译器与历史验证见同目录 `FINAL_REPORT.md`。
 
-轻量发布预览不包含整份论文、原生地图及图片。真实案例图的完整依赖记录于现有工作区的 `figure_sources.json`，包括 SimLingo `Town03.h5`、历史场景照片及逐帧轨迹。可选绘图依赖是 `requirements/figures.txt`；仅安装绘图库不能生成缺失的真实相机画面。
+源码仓库不包含整份论文和图片；`assets.py --profile paper-artifacts` 可下载 224 份已有论文源和附件。真实案例图的依赖记录位于 `deliverables/paper_revision_20260915/figure_sources.json`，其中所需 SimLingo `Town03.h5`、历史场景照片及逐帧轨迹已收录进现有记录归档。可选绘图依赖是 `requirements/figures.txt`；仅安装绘图库不能生成缺失的真实相机画面。
 
 不要直接重跑 `revise_paper.py` 覆盖当前论文；已有用户编辑超出了旧模板。方法图与开头图仍由另一台机器维护。

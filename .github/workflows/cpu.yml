@@ -26,7 +26,8 @@ jobs:
           cache: pip
           cache-dependency-path: requirements/*.txt
       - name: 安装 CPU 依赖
-        run: python -m pip install --require-hashes --only-binary=:all: -r requirements/paper.lock.txt
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r requirements/paper.lock.txt
       - name: 检查冻结输入
         run: python engineering/reproduce.py doctor --profile paper
       - name: CPU 回归与离线演示

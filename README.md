@@ -30,7 +30,7 @@ cd DriveClarify
 bash reproduce.sh
 ```
 
-脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 301 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
+脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 305 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
 
 容器方式：
 
@@ -57,6 +57,25 @@ python engineering/reproduce.py paper --output build/paper-001
 `paper` 会校验 [55 份输入及参考文件](engineering/paper_assets.json)，将所需文件复制到新目录后运行原始脚本，最后逐字节比较 14 个参考输出并生成 `REPRODUCTION_RECEIPT.json`。原始冻结代码、标签和历史结果保持原样。
 
 本仓库暂按源码目录运行：冻结 schema、fixture 和论文输入位于 Python 包外。`pyproject.toml` 管理默认测试范围，依赖在 `requirements/`；暂不提供 `pip install -e .` 或独立 wheel。
+
+## 模型、原始记录和论文附件
+
+下载清单位于 [release_assets.json](engineering/release_assets.json)，包含固定上游版本、文件大小与 SHA-256。上游 SimLingo 基础权重和 InternVL2-1B 从 Hugging Face 下载；本项目的适配权重与实验归档使用 [GitHub Releases](https://github.com/ry535687-ux/DriveClarify/releases)。**本项目大文件已在本地打包，Release 上传正在等待 GitHub CLI 网页授权；完成前以下 Release 下载命令会报资产不存在。**
+
+发布完成后的下载入口：
+
+```bash
+# 4226 份历史场景/轨迹/记录，以及适配训练的配置、输入和选择记录
+python3 engineering/assets.py --profile evidence --output build/assets
+
+# 论文 LaTeX、已有图表与交付附件
+python3 engineering/assets.py --profile paper-artifacts --output build/assets
+
+# 全部原生模型资产、历史记录；至少预留 20 GB 下载及解压空间
+python3 engineering/assets.py --profile native --output build/native-workspace
+```
+
+重复运行可续传；每个文件先验证摘要再使用。适配权重自动合并分片，归档解压到独立目录，已有内容不同则拒绝覆盖。这些命令准备已有资产；原生代码还原、CARLA 地图和硬件条件见[复现说明](engineering/REPRODUCING.md#原生环境与模型)。
 
 ## 实验与入口
 
@@ -109,8 +128,8 @@ python engineering/reproduce.py inventory --output build/inventory.json
 python engineering/reproduce.py export --output build/github-preview-001
 ```
 
-开发约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，GitHub 上传流程见[发布指南](engineering/PUBLISHING.md)。GitHub Actions 仅执行 CPU 测试与离线复现，Python 3.10 / 3.13 的远程检查需在上传后实际运行。
+开发约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，GitHub 上传流程见[发布指南](engineering/PUBLISHING.md)。[GitHub Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的 CPU 测试与离线复现；请以具体运行记录为准。
 
 ## 第三方与许可
 
-本项目的原生接口依赖 [SimLingo](https://github.com/RenzKa/simlingo)、[CARLA 0.9.15](https://carla.readthedocs.io/en/0.9.15/start_quickstart/) 及其 Bench2Drive 组件。第三方代码、地图、模型和数据分别遵循原许可。仓库尚未选定自身开源许可证，也未填写论文作者、发表信息或 DOI；公开发布前应由维护者补齐，不能据此 README 推定已经获得再分发授权。
+本项目的原生接口依赖 [SimLingo](https://github.com/RenzKa/simlingo)、[CARLA 0.9.15](https://carla.readthedocs.io/en/0.9.15/start_quickstart/) 及其 Bench2Drive 组件。第三方代码、地图、模型和数据分别遵循原许可。仓库尚未选定自身开源许可证，也未填写论文作者、发表信息或 DOI；许可与作者信息由维护者另行确定；不能据此 README 推定第三方资产的再分发授权。
