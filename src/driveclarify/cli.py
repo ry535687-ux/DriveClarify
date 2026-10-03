@@ -5,7 +5,7 @@ import sys
 
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="driveclarify", description=__doc__)
-    parser.add_argument("command", choices=["evaluate", "assets", "prepare", "benchmark"])
+    parser.add_argument("command", choices=["evaluate", "assets", "prepare", "setup", "benchmark"])
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv or argv[0] in ("-h", "--help"):
         parser.print_help()
@@ -18,6 +18,8 @@ def main(argv=None):
         from .tools.assets import main as run
     elif args.command == "prepare":
         from .tools.prepare import main as run
+    elif args.command == "setup":
+        from .tools.setup import main as run
     else:
         from .tools.benchmark import main as run
     return run(remaining)

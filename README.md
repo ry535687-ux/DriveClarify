@@ -29,32 +29,50 @@ driveclarify evaluate --output build/evaluation-001
 
 输出包含 `predictions.jsonl`、`prediction-lock.json`、`scores.csv`、`summary.csv` 和 `receipt.json`。先锁定预测，再读取标签；44 条任务标签未定义的输入不计正确率。`Random-Query` 是概率为 1/3 的解析期望。
 
-## 原生驾驶
+## 完整驾驶复现
 
-按 [CARLA 安装与运行指南](docs/carla.md)准备 Linux x86_64、NVIDIA GPU、独立 Python 3.8 环境、CARLA 0.9.15 与地图，然后运行：
+主机要求：Linux x86_64（建议 Ubuntu 22.04）、Python 3.10+、Git、Bash、已安装的 NVIDIA 535 或更新驱动。建议至少 16 GB 显存、32 GB 内存；首次准备须有 **100 GiB 空闲空间**。Ubuntu 的基础工具可安装为：
 
 ```bash
-driveclarify prepare --workspace build/native-workspace \
-  --carla-root "$PWD/build/carla-install/CARLA_0.9.15" \
-  --native-python "$PWD/build/native-env/bin/python"
-driveclarify assets --output build/native-workspace
-driveclarify benchmark plan --paths build/native-workspace/paths.local.json \
-  --output build/smoke --offscreen
-driveclarify benchmark run --plan build/smoke --dry-run
-driveclarify benchmark run --plan build/smoke
+sudo apt-get update
+sudo apt-get install -y git python3-venv bzip2 libvulkan1 libx11-6 libglib2.0-0
 ```
 
-最后一条命令加载模型并启动 CARLA。确认单路线环境后，用 `plan --all` 生成 220 路线 / A0、A1 共 440 次运行；用 `run --resume` 续跑、`collect` 收集首次合法结果。模型固定到公开上游版本和[适配权重 Release](https://github.com/ry535687-ux/DriveClarify/releases/tag/v0.1.0-assets)，下载支持续传、分片合并和完整 SHA-256 校验。
+克隆本仓库后，只需运行：
 
-基准 A0/A1 使用同一适配权重，A1 在澄清上下文为空时透明旁路到原生 SimLingo。它不证明真实答案绑定场景的任务收益。新 GPU 主机的原生环境安装及真实驾驶尚未在本轮验证；最终 220 路线结果由运行者生成。
+```bash
+bash reproduce.sh --native
+```
+
+入口自动安装独立 Python 3.8.18 环境与固定依赖；没有 Conda 时自动安装项目内的 Miniforge；还原固定版本后端并应用本仓库补丁；下载、解压 CARLA 0.9.15 与全部路线所需的地图；下载模型、合并权重分片并校验 SHA-256；恢复 220 条路线及种子；最后启动一条路线的 A0/A1 配对，自动收集首次合法结果并生成两份 `merged.json`。不需要另行克隆 SimLingo 或 Bench2Drive，也不需要按它们的教程配置环境。
+
+首次需要联网下载大文件，耗时取决于带宽；下载中断后重新执行同一命令即可续传。安装文件、模型与结果统一放在 `build/native/`，不进入 Git。CARLA 归档固定 HTTPS 对象、ETag 和大小，解压检查 gzip 完整性并记录本地 SHA-256；模型使用预先固定的 SHA-256。
+
+```bash
+# 只准备环境、地图和模型，不启动驾驶
+bash reproduce.sh --native --setup-only
+
+# 准备后检查完整 440 次运行命令，不启动驾驶
+bash reproduce.sh --native --all --dry-run --output build/native/full-check
+
+# 正式运行 220 路线 × A0/A1，并自动收集、合并结果
+bash reproduce.sh --native --all --output build/native/full
+
+# 中断后续跑同一计划；已获得的合法结果保留
+bash reproduce.sh --native --resume --output build/native/full
+```
+
+结果位于计划目录的 `summary-*/`，包含逐路线 CSV、结果来源记录和 `official_merge/A0/merged.json`、`official_merge/A1/merged.json`。少于 220 路线的合并仅用于启动检查，不作为完整基准成绩。已有模型或 CARLA 的复用方法、输出说明及故障处理见 [运行指南](docs/carla.md)，所有操作均通过本仓库入口完成。
+
+基准 A0/A1 使用同一适配权重，A1 在澄清上下文为空时透明旁路到原生后端。它不证明真实答案绑定场景的任务收益。已验证自动准备工具、固定源代码/地图清单/模型校验和完整运行命令；本次未在空白 GPU 主机安装全部大文件并完成真实驾驶。最终 220 路线结果由运行者生成。
 
 ## 目录
 
 ```text
 src/driveclarify/  核心算法、执行接口、命令工具与必要运行资源
 configs/          本机路径配置示例
-scripts/          原生环境安装
-requirements/     CPU 工具锁、原生依赖和 Conda 清单
+scripts/          安装兼容入口
+requirements/     CPU 工具依赖锁；原生清单随安装包发布
 tests/            当前实现的行为和回归测试
 docs/             运行与接口说明
 build/            本机环境、模型和新输出（不进入 Git）
@@ -75,7 +93,6 @@ docker run --rm --user "$(id -u):$(id -g)" \
 
 项目支持构建 wheel，安装包包含运行资源。修改决策逻辑时检查输入合同、未知证据、预测与标签隔离、答案生效帧及原生控制所有权；行为改变应使用新的参考数据说明原因。GitHub Actions 检查 Python 3.10 / 3.13 下的安装、测试及离线评测。
 
-## 第三方
+## 致谢
 
-原生后端依赖 [SimLingo](https://github.com/RenzKa/simlingo)、[CARLA](https://carla.org/) 和 Bench2Drive；代码、地图、模型分别遵循其原许可。本项目自身尚未选定开源许可证。
-
+本项目集成 SimLingo、CARLA 和 Bench2Drive。安装入口自动准备其固定版本；下载内容保留原始许可与出处，相关说明见 [第三方来源](docs/third-party.md)。

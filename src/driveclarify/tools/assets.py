@@ -99,8 +99,14 @@ def assemble(record, root):
     target.parent.mkdir(parents=True, exist_ok=True)
     partial = checked_path(root, record["path"] + ".assembling")
     if partial.exists():
-        raise ValueError(f"保留了之前的合并文件，请检查后删除：{partial}")
-    with partial.open("xb") as output:
+        if partial.stat().st_size == record["bytes"] and digest(partial) == record["sha256"]:
+            partial.replace(target)
+            return
+        if partial.stat().st_size > record["bytes"]:
+            raise ValueError(f"合并断点超过固定大小，请检查：{partial}")
+    # Only the tool's checked temporary path is restarted. The final file is
+    # never overwritten; each input part is verified again before copying.
+    with partial.open("wb") as output:
         for part in record["parts"]:
             source = checked_path(root, part["path"])
             verify(source, part)

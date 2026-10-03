@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "driveclarify"
-version = "0.2.0"
+version = "0.2.1"
 description = "Selective clarification using task consequences, temporal evidence and answer binding"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,4 +24,3 @@ driveclarify = ["resources/*", "resources/upstream_extra/team_code/*.py", "resou
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra -p no:cacheprovider"
-

@@ -1,0 +1,23 @@
+{
+  "miniforge": {
+    "path": "Miniforge3-24.3.0-0-Linux-x86_64.sh",
+    "url": "https://github.com/conda-forge/miniforge/releases/download/24.3.0-0/Miniforge3-24.3.0-0-Linux-x86_64.sh",
+    "bytes": 82796318,
+    "sha256": "23367676b610de826f50f7ddc91139a816d4b59bd4c69cc9b6082d9b2e7fe8a3"
+  },
+  "carla": [
+    {
+      "path": "CARLA_0.9.15.tar.gz",
+      "url": "https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/CARLA_0.9.15.tar.gz",
+      "bytes": 8386636048,
+      "etag": "\"e7e759a251bbd7c62bcd38b789ad8499-84\""
+    },
+    {
+      "path": "AdditionalMaps_0.9.15.tar.gz",
+      "url": "https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/AdditionalMaps_0.9.15.tar.gz",
+      "bytes": 7375946087,
+      "etag": "\"25fb0bda594ad2fef5431a056c9ee990-880\"",
+      "sha256": "49db78d14fef1f403f69fe1a13f1f1802f2111a6d98161826b2ae0d6dd96bba8"
+    }
+  ]
+}

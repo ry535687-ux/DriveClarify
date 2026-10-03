@@ -7,6 +7,14 @@ repro_python=python3
 repro_venv="$repro_root/.venv"
 repro_output="$repro_root/build/evaluation-$(date +%Y%m%d-%H%M%S)-$$"
 repro_install=1
+repro_native=0
+repro_native_args=()
+if [[ ${1:-} == --native ]]; then
+  repro_native=1
+  shift
+  repro_native_args=("$@")
+  set --
+fi
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --python) repro_python=$2; shift 2 ;;
@@ -28,6 +36,9 @@ if [[ $repro_install == 1 ]]; then
     --no-build-isolation --no-deps -e .
 fi
 export PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+if [[ $repro_native == 1 ]]; then
+  exec "$repro_venv/bin/python" -m driveclarify setup "${repro_native_args[@]}"
+fi
 "$repro_venv/bin/python" -m pytest
 "$repro_venv/bin/python" -m driveclarify evaluate --output "$repro_output"
 echo "复现完成：$repro_output/receipt.json"

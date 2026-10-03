@@ -2,7 +2,7 @@
   "files": {
     "__init__.py": "6a1ecc829537fd947a10e5eca6795d5555a1ee4e3c03210c94f1c9d2e38fe1b8",
     "__main__.py": "76fa916e93e0ae1a6c1bb51dcc0bcf289c014e9f760a47165f8a84401ccf41d7",
-    "cli.py": "22c8ed2ce9973662675ed53aeb83984f39ab461e83c5d41dc46ca58a88a13964",
+    "cli.py": "ecb7ef4da114265b8fc4b55e752bbcf703dec43a1c4c5d2973dbc10a8c47d923",
     "core/__init__.py": "c7c458557f173e203bcd11eb83f3d41e8f293ccf04befd01464e6d000956bad3",
     "core/contracts.py": "ca648afe62a296432c44846e91633af136b7d572bcd8e88738f50b890dd8be63",
     "core/features.py": "ccb3f4c1ab49ed635dfdd4be227dce2cc2d24338014e180956a30761a709e92e",
@@ -32,14 +32,17 @@
     "native/temporal_agent.py": "5285508672a064ed358da199f8c76777840c456c8a68a3f203afce876852c8dc",
     "paths.py": "43c8836faccb3f05a2c3af3a7f7cfdc7a9afaaf605de2edb07d348c698e4abd4",
     "resources/assets.json": "e932179cfbc6bf19d8b900042f53086dc814cac3004e6507f084b0a4c1c9bfd0",
+    "resources/conda-linux64.explicit.txt": "f087630f6d8a57ece7a1572bfb6cbb101da397cb7e6ea4d0b0907be20e9d86c6",
     "resources/evaluation.json": "bfdec05b7a3228fd245191b7145565ac54135f6ccbd8b01fcd1f80c899d023bb",
     "resources/expected-predictions.jsonl": "038ea8b19b5a0742aff15f76332facd2f7df235b37821867d6a59b426cb8906d",
     "resources/expected-scores.csv": "0bddce92df0fe0db1eef263717946255d299fd134d35fe6fbee4924585197088",
     "resources/inputs.jsonl": "c508f44fd5684b59e73e496d268aa45a6412a37369a7fce14d101ba13c475fc6",
     "resources/labels.jsonl": "62ab341241b09bcdc0aaa21a24a3436e241bbf25a9eeda528ebb0bf2d4e4b608",
     "resources/model-config.yaml": "b7c25f1d0d2d7cd466c32a4115d843a1f75fcb52d1c89353f1a0753a2f6185a0",
+    "resources/native-requirements.txt": "3246740b34fed046335faf38011b77b7e242935ef7b31e1b3f5f99c9756193bc",
     "resources/native.json": "3370436724934347c66a3e01ffd6627645976c861b68ef900ed904e6c05e10d5",
     "resources/routes.json": "0e90557c209a85234a7ad472c40d1dc5c9a46da09dfaee679ca1562402694117",
+    "resources/runtime.json": "65bfbed35e7a7e31c5d41785ab52c49a28f00681350402e1724be9e5e697ebc5",
     "resources/simlingo.patch": "112c1d006d398a10c91a1f25ae9a664bdecdf32a25246c8fed343c36daea970a",
     "resources/upstream_extra/simlingo_training/config/driveclarify_route_switch_v1.yaml": "e6c87ce37c08b5ac36abc705947aa137ed9cfc2c2f30326511d0845d9d9256bd",
     "resources/upstream_extra/simlingo_training/driveclarify_adaptation_contract.py": "39cbfbd9a407f82a3d77c8094b082bcfe6ef4f0eac99d89e8ce25666ff5e28b2",
@@ -54,10 +57,11 @@
     "temporal/terminal.py": "8ac6c6fc7c7de3ad59451d47b4b6161affd9126819470ba4f51056dfaef1f177",
     "temporal/types.py": "0cb98f3abe6b26cb38cab1d0cfcc8c70cf05f112316e6bd9532f1d4275a60b76",
     "tools/__init__.py": "9aa1885c0b8b7a88032e808eb1554fa154131651dbbfddb0eeab6f6c1e8d6fff",
-    "tools/assets.py": "f6d0b36298d31db359044dc52f7a56675e3bd4aa78514834dd8174539f7b7d20",
-    "tools/benchmark.py": "8d34fbfb0868a603e9035663a6e94b787b1b162152c7afc43205e8aa32cd9413",
+    "tools/assets.py": "73477f8730f5e3510410d0535789c0eabfd1a0b532e500835c403cad9dcc036f",
+    "tools/benchmark.py": "c4f261235a7f0590cd9d256b0d83a840b353ef9d7717c8abe68658a960483b55",
     "tools/native_common.py": "356723fc45fc07bc0452716d49ef9f4115944d68f9101162ebbe39b39294712c",
-    "tools/prepare.py": "4e9703d60cc65f0dba569b89e8087efd414d82779d37c670947a1f5633ba0f75",
-    "tools/route_worker.py": "fa5c4e5c3e77d7efd2e631afe22cf03083d704ec1b062c4c36df9c55f718c829"
+    "tools/prepare.py": "59bed1c7aff0363e1176e2e8386ce5e3817b07fe8a6368642f545076cf4173fa",
+    "tools/route_worker.py": "fa5c4e5c3e77d7efd2e631afe22cf03083d704ec1b062c4c36df9c55f718c829",
+    "tools/setup.py": "f9f4e66859902ca0011b51de527bb170f104945f8f007e133305ad2c145560d1"
   }
 }

@@ -247,7 +247,7 @@ def run_plan(directory, route_id=None, arm=None, resume=False, attempt=1, repair
                 raise ValueError(f"尚无合法最终结果，停止后续运行，请检查 {output}/evaluator.log")
 
 
-def collect(directory, output):
+def collect(directory, output, merge=False):
     directory = Path(directory).resolve()
     plan = validate_plan(directory)
     output = Path(output).resolve()
@@ -276,6 +276,16 @@ def collect(directory, output):
     write(output / "RESULT_SOURCES.json", {"scope": plan["scope"], "complete": complete,
                                            "expected_pairs": len(plan["routes"]), "selected": selected,
                                            "missing": [r for r in rows if r["status"] == "MISSING"]})
+    if merge and complete:
+        paths = {k: Path(v) for k, v in plan["paths"].items()}
+        script = paths["simlingo_root"] / "Bench2Drive/tools/merge_route_json.py"
+        expected = read(RESOURCES / "native.json")["frozen_upstream_files"].get("Bench2Drive/tools/merge_route_json.py")
+        if not expected or sha(script) != expected:
+            raise ValueError("结果合并脚本摘要不符")
+        # This pinned script uses only the standard library. Keep its metric
+        # definitions and its explicit warning for fewer than 220 routes.
+        for arm in ("A0", "A1"):
+            subprocess.run([sys.executable, str(script), "--folder", str(output / "official_merge" / arm)], check=True)
     print(f"已收集 {len(selected)}/{2 * len(plan['routes'])} 份第一最终结果；{output}")
     return 0 if complete else 2
 
@@ -304,6 +314,7 @@ def main(argv=None):
     child = sub.add_parser("collect")
     child.add_argument("--plan", type=Path, required=True)
     child.add_argument("--output", type=Path, required=True)
+    child.add_argument("--merge", action="store_true", help="完整收集后自动运行固定版本的官方合并工具")
     args = parser.parse_args(argv)
     try:
         if args.command == "preflight":
@@ -316,7 +327,7 @@ def main(argv=None):
         elif args.command == "run":
             run_plan(args.plan, args.route_id, args.arm, args.resume, args.attempt, args.repair_note, args.dry_run)
         else:
-            return collect(args.plan, args.output)
+            return collect(args.plan, args.output, merge=args.merge)
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as exc:
         print(f"Bench2Drive 未完成：{exc}", file=sys.stderr)
