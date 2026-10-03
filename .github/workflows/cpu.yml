@@ -1,39 +1,30 @@
 name: CPU reproduction
-
 on:
   push:
+    branches: [main]
   pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
 jobs:
   reproduce:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     strategy:
-      fail-fast: false
       matrix:
-        python-version: ['3.10', '3.13']
+        python: ['3.10', '3.13']
     steps:
       - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: requirements/*.txt
-      - name: 安装 CPU 依赖
+          python-version: ${{ matrix.python }}
+      - name: Install pinned tools and build wheel
         run: |
-          python -m pip install --require-hashes --only-binary=:all: -r requirements/paper.lock.txt
-      - name: 检查 CPU 依赖
-        run: python engineering/reproduce.py doctor --profile cpu
-      - name: CPU 回归与离线演示
+          python -m pip install --require-hashes --only-binary=:all: -r requirements/cpu.lock.txt
+          python -m pip wheel --no-build-isolation --no-deps --wheel-dir build/wheels .
+          python -m pip install --no-deps build/wheels/*.whl
+          python -m pip check
+      - name: Test installed package and evaluate controlled inputs
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
         run: |
-          python engineering/reproduce.py test
-          python engineering/reproduce.py demo --output build/ci-demo
-      - name: 独立目录复现论文统计
-        if: matrix.python-version == '3.13'
-        run: python engineering/reproduce.py paper --output build/ci-paper
+          python -m pytest
+          driveclarify evaluate --output build/evaluation
+          python -m compileall -q src/driveclarify
+

@@ -1,5 +1,7 @@
 .git
-build
 .venv*
-__pycache__
-*.local.json
+build
+dist
+**/__pycache__
+**/*.egg-info
+

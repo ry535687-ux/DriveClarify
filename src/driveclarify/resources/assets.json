@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "release_tag": "v0.1.0-assets",
+  "downloads": [
+    {
+      "name": "driveclarify-b2d-checkpoint.part-01.bin",
+      "bytes": 1342177280,
+      "sha256": "a6ad42d7e307e26fad00d4c565b8b8213c1add012de6253ac9a2a33ab46311ab",
+      "url": "https://github.com/ry535687-ux/DriveClarify/releases/download/v0.1.0-assets/driveclarify-b2d-checkpoint.part-01.bin",
+      "path": "downloads/driveclarify-b2d-checkpoint.part-01.bin",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "name": "driveclarify-b2d-checkpoint.part-02.bin",
+      "bytes": 1227504222,
+      "sha256": "af20326b908bc9c1cbdf15dad9ef23e3accdc10bbc97fe721de15a3f3f3fc862",
+      "url": "https://github.com/ry535687-ux/DriveClarify/releases/download/v0.1.0-assets/driveclarify-b2d-checkpoint.part-02.bin",
+      "path": "downloads/driveclarify-b2d-checkpoint.part-02.bin",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/outputs/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt",
+      "url": "https://huggingface.co/RenzKa/simlingo/resolve/26c7c89e797d4e25bbf640013317af8da26a5454/simlingo/checkpoints/epoch=013.ckpt/pytorch_model.pt",
+      "bytes": 2569679322,
+      "sha256": "ec8943723d266ee9f5f56f45d153a163b22616960bfccb741965ea5daa700d28",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/added_tokens.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/added_tokens.json",
+      "bytes": 265,
+      "sha256": "baea1c1e8f24ce785f49112072664b8be778e9242a1a21cf6f7c6cb92add6d10",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/config.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/config.json",
+      "bytes": 3732,
+      "sha256": "2e85a81acfc8cbea3dc3cee831e6c4b171d456f30938aef14cf37d5eb2ac00ed",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/configuration_intern_vit.py",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/configuration_intern_vit.py",
+      "bytes": 5548,
+      "sha256": "22dd687a5f142985407675fc6b1dc688c2ded93e54192543ecf28ef495a6efa8",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/configuration_internvl_chat.py",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/configuration_internvl_chat.py",
+      "bytes": 4036,
+      "sha256": "6524e6deae6c318543d1022a599f011120f5a970eaa25f1118e7f5d0e346710c",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/conversation.py",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/conversation.py",
+      "bytes": 15309,
+      "sha256": "b1b9f280e9cb9211e519e2b8071002b57cc742aadb2f49b05fa674ee3c7d83ee",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/generation_config.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/generation_config.json",
+      "bytes": 117,
+      "sha256": "2decd6209b7280fbf8ddba60a24047ce26cbd6ac539bca8ec145d21aeaaf4498",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/merges.txt",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/merges.txt",
+      "bytes": 1670344,
+      "sha256": "455e0caaa06abffc663e9282dfe71dde07fd1991eaf24146bf08793c4dba4497",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/modeling_intern_vit.py",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/modeling_intern_vit.py",
+      "bytes": 18106,
+      "sha256": "1978e330ea5533dda4d1379096aded271fc741347fc48cb4924846b56a2a6a4b",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/modeling_internvl_chat.py",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/modeling_internvl_chat.py",
+      "bytes": 15926,
+      "sha256": "5d8f26ccfeb8434c0bcc295050725add4b2f2b0ffb4d1ab550c877a648386597",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/preprocessor_config.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/preprocessor_config.json",
+      "bytes": 287,
+      "sha256": "0658115064c561026539aeeead9ed3b1a8e0cc90967df8c142849199f955d2b4",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/special_tokens_map.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/special_tokens_map.json",
+      "bytes": 498,
+      "sha256": "af3c7a7e8e3396571d8640b822cd611de2b51b15cf65a5dc1054ffea31483427",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/tokenizer_config.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/tokenizer_config.json",
+      "bytes": 3017,
+      "sha256": "2ed7120320ff66f65e1dccc704f318eeccab8941292424dfdf8290dd1b689634",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/vocab.json",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/vocab.json",
+      "bytes": 3383407,
+      "sha256": "87a257b04b17642a0688c98cd1df89c398bda4fee532d6f88b38a659ecb4ac8d",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/pretrained/InternVL2-1B/model.safetensors",
+      "url": "https://huggingface.co/OpenGVLab/InternVL2-1B/resolve/0d75ccd166b1d0b79446ae6c5d1a4a667f1e6187/model.safetensors",
+      "bytes": 1876395376,
+      "sha256": "9420916a7fab7d2009f7907cdffa341c9cb6be7c5e0cf4ee193de16fde647dea",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "simlingo/outputs/simlingo/.hydra/config.yaml",
+      "url": "https://raw.githubusercontent.com/ry535687-ux/DriveClarify/497e77fdee144c9bcbac34c7624e60ef0bd9a21c/engineering/env/base-model-config.yaml",
+      "bytes": 2551,
+      "sha256": "d56a7c1ebf3b6fd7ff6edff87071f1b2fe7269563e3ea626379994bef7807417",
+      "profiles": [
+        "native"
+      ]
+    },
+    {
+      "path": "models/.hydra/config.yaml",
+      "url": "https://raw.githubusercontent.com/ry535687-ux/DriveClarify/497e77fdee144c9bcbac34c7624e60ef0bd9a21c/engineering/env/b2d-model-config.yaml",
+      "bytes": 2703,
+      "sha256": "b7c25f1d0d2d7cd466c32a4115d843a1f75fcb52d1c89353f1a0753a2f6185a0",
+      "profiles": [
+        "native"
+      ]
+    }
+  ],
+  "assemblies": [
+    {
+      "path": "models/a1_selected.ckpt/pytorch_model.pt",
+      "bytes": 2569681502,
+      "sha256": "cc6873e2a7778140ff7af3fd7d3578114b26bd6a47974e955f0845ddd2178044",
+      "parts": [
+        {
+          "path": "downloads/driveclarify-b2d-checkpoint.part-01.bin",
+          "bytes": 1342177280,
+          "sha256": "a6ad42d7e307e26fad00d4c565b8b8213c1add012de6253ac9a2a33ab46311ab"
+        },
+        {
+          "path": "downloads/driveclarify-b2d-checkpoint.part-02.bin",
+          "bytes": 1227504222,
+          "sha256": "af20326b908bc9c1cbdf15dad9ef23e3accdc10bbc97fe721de15a3f3f3fc862"
+        }
+      ],
+      "profiles": [
+        "native"
+      ]
+    }
+  ]
+}

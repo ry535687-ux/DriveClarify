@@ -1,0 +1,6 @@
+{
+  "grounding_threshold": 0.0,
+  "trajectory_horizon_s": 2.5,
+  "trajectory_step_s": 0.05,
+  "trajectory_threshold_m": 0.1
+}

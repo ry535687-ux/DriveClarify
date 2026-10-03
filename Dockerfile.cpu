@@ -1,8 +1,0 @@
-FROM python:3.13.5-slim
-WORKDIR /workspace/DriveClarify
-COPY requirements/ requirements/
-RUN python -m venv /opt/reproduce && \
-    /opt/reproduce/bin/python -m pip install --no-cache-dir --require-hashes \
-    --only-binary=:all: -r requirements/paper.lock.txt
-COPY . .
-ENTRYPOINT ["bash", "reproduce.sh", "--venv", "/opt/reproduce", "--skip-install"]

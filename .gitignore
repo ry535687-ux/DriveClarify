@@ -1,99 +1,14 @@
-# DriveClarify repository boundary
-# Historical runtime evidence remains on disk and is read-only, but is not
-# tracked by this design/offline-evaluator repository.
-/runtime/
-/workspace/
-
-# Host-uploaded research sources are immutable review inputs, not repository
-# deliverables. Their identities are recorded in the design audit documents.
-/DriveClarify_host_upload_pack/
-
-# Pre-existing OpenArm packaging material is outside the DriveClarify contract.
-/docker/
-/docs/
-/patches/
-/scripts/
-/HANDOFF.md
-/Makefile
-/.dockerignore
-
-# Model weights, datasets, archives, videos, and generated run products
+.venv*/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+paths.local.json
 *.ckpt
 *.pt
-*.pth
-*.safetensors
-*.onnx
 *.bin
-*.npy
-*.npz
-*.mp4
-*.avi
-*.mov
-*.mkv
-*.gif
-*.tar
-*.tar.gz
-*.zip
+*.safetensors
 
-# Python and editor state
-**/__pycache__/
-**/*.py[cod]
-.vscode/
-.idea/
-
-# Local test and coverage output
-.pytest_cache/
-.coverage
-.coverage.*
-coverage.xml
-htmlcov/
-/reports/offline_v0/results/pytest.xml
-dist/
-build/
-
-# 工程化入口的本机配置、依赖环境和新产物
-.venv/
-.venv-reproduce/
-venv/
-*.egg-info/
-.env
-.env.*
-!.env.example
-*.local.json
-*.local.toml
-*.pem
-*.key
-.DS_Store
-*.log
-*.rar
-*.7z
-*.h5
-*.hdf5
-/.claude/
-/pretrained/
-/artifacts/
-/logs/
-/results/
-/qualitative_cases/
-/video_icra2027/
-/DriveClarify_RP_PhD_Application/
-/ICRA2027_VLA/
-/paper_ieeeconf_en/build/
-**/formal_native/
-**/formal_runs/
-**/outputs/
-
-# 本地研究交接与办公临时文件；发布使用 engineering/reproduce.py export
-/AGENT_WORKLOG.md
-/COMMAND_LOG.md
-/CURRENT_HANDOFF.md
-/CURRENT_TRUTH_SUMMARY.md
-/NEXT_AGENT_PROMPT.md
-/STATE*.json
-/TAKEOVER_AUDIT.md
-/PLAN.md
-/PROJECT_LONG_TERM_REQUIREMENTS.md
-/CLAUDE.md
-/.~*
-/*.docx
-/*.pptx

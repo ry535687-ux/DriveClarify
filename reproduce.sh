@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# 安装锁定依赖，执行 CPU 回归、合成演示和论文计算。
 set -euo pipefail
+unset PYTHONPATH
+export PYTHONNOUSERSITE=1
 repro_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repro_python=python3
-repro_venv="$repro_root/.venv-reproduce"
-repro_output="$repro_root/build/reproduction-$(date +%Y%m%d-%H%M%S)-$$"
+repro_venv="$repro_root/.venv"
+repro_output="$repro_root/build/evaluation-$(date +%Y%m%d-%H%M%S)-$$"
 repro_install=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -17,16 +18,16 @@ while [[ $# -gt 0 ]]; do
 done
 cd "$repro_root"
 if [[ ! -x "$repro_venv/bin/python" ]]; then
-  "$repro_python" -c 'import sys; assert sys.version_info[:2] == (3, 13), "论文逐字节复现需要 Python 3.13，可用 --python python3.13 指定"'
+  "$repro_python" -c 'import sys; assert sys.version_info >= (3,10), "需要 Python 3.10+"'
   "$repro_python" -m venv "$repro_venv"
 fi
-"$repro_venv/bin/python" -c 'import sys; assert sys.version_info[:2] == (3, 13), "论文逐字节复现需要 Python 3.13"'
 if [[ $repro_install == 1 ]]; then
   "$repro_venv/bin/python" -m pip install --disable-pip-version-check \
-    --require-hashes --only-binary=:all: -r requirements/paper.lock.txt
+    --require-hashes --only-binary=:all: -r requirements/cpu.lock.txt
+  "$repro_venv/bin/python" -m pip install --disable-pip-version-check \
+    --no-build-isolation --no-deps -e .
 fi
-"$repro_venv/bin/python" engineering/reproduce.py doctor --profile paper
-"$repro_venv/bin/python" engineering/reproduce.py test
-"$repro_venv/bin/python" engineering/reproduce.py demo --output "$repro_output-demo"
-"$repro_venv/bin/python" engineering/reproduce.py paper --output "$repro_output"
-echo "复现完成：$repro_output/REPRODUCTION_RECEIPT.json"
+export PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+"$repro_venv/bin/python" -m pytest
+"$repro_venv/bin/python" -m driveclarify evaluate --output "$repro_output"
+echo "复现完成：$repro_output/receipt.json"

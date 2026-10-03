@@ -1,11 +1,27 @@
-# 当前以源码仓库复现：冻结的 schema/fixture 位于包外，尚不发布 wheel。
-# 依赖分别见 requirements/，原生 SimLingo 使用独立 Python 3.8 环境。
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "driveclarify"
+version = "0.2.0"
+description = "Selective clarification using task consequences, temporal evidence and answer binding"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+driveclarify = "driveclarify.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["driveclarify*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+driveclarify = ["resources/*", "resources/upstream_extra/team_code/*.py", "resources/upstream_extra/simlingo_training/*.py", "resources/upstream_extra/simlingo_training/config/*.yaml"]
+
 [tool.pytest.ini_options]
-minversion = "8.0"
-testpaths = [
-  "tests/offline_v0",
-  "tests/test_paper_answer_binding.py",
-  "tests/test_paper_native_binding.py",
-  "tests/engineering",
-]
-addopts = "-ra"
+testpaths = ["tests"]
+addopts = "-ra -p no:cacheprovider"
+

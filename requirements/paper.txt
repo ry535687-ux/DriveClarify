@@ -1,4 +1,0 @@
-# 论文离线主表、消融和历史闭环统计；不安装 CARLA / PyTorch。
--r cpu.txt
-numpy==2.1.3
-scipy==1.15.3

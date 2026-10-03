@@ -1,151 +1,81 @@
 # DriveClarify
 
-**面向语言指令驾驶的选择性澄清研究：结合候选任务后果、证据完整性与剩余时间，判断何时执行、等待或询问。**
+根据候选任务后果、证据完整性和剩余时间，决定执行、等待或询问，并将回答绑定到后续观测与原生导航。
 
-这个仓库包含离线决策器、论文受控实验、历史闭环分析，以及与 SimLingo / CARLA 对接的研究代码。已提供 CPU 论文重算、公开模型/数据下载，以及 CARLA / Bench2Drive 的安装、单路线试跑、220 路线启动和结果收集入口。原生驾驶由复现者在 GPU 主机运行，步骤见[原生启动指南](engineering/BENCH2DRIVE.md)。
-
-## 方法概览
-
-语言存在歧义，不一定意味着必须询问。DriveClarify 比较候选解释对任务的影响，保留未知证据，并检查回答及后续执行是否仍有时间完成。
-
-```mermaid
-flowchart LR
-    A[语言指令与场景证据] --> B[候选解释与任务后果]
-    B --> C[任务关系与证据完整性]
-    C --> D[执行与询问时间条件]
-    D --> E[ACT / WAIT / ASK]
-    E --> F[合法回答与后续观测绑定]
-    F --> G[原生导航与模型接口]
-```
-
-不同实验版本的后果比较器与执行接口有各自的冻结合同；不能将这张概念图视为所有历史版本都已通过的闭环能力证明。当前答案绑定组件位于 `driveclarify_paper_runtime/`。
+仓库只维护一套实现，统一安装为 `driveclarify` 包。包含核心算法、答案绑定、CARLA / SimLingo 接口、受控评测数据和运行工具。
 
 ## 快速开始
 
-一键完成环境安装、测试、演示和论文统计复现：
+需要 Python **3.10+**、Git 和 Bash。离线评测使用标准库，不加载模型或启动 CARLA。
 
 ```bash
-git clone --branch v0.1.0 --single-branch https://github.com/ry535687-ux/DriveClarify.git
+git clone https://github.com/ry535687-ux/DriveClarify.git
 cd DriveClarify
 bash reproduce.sh
 ```
 
-一键脚本需要 **Python 3.13**（可用 `bash reproduce.sh --python python3.13` 指定）。脚本会创建独立 `.venv-reproduce/`，按版本与下载文件 SHA-256 安装完整 CPU 依赖，并将结果写入新建的 `build/reproduction-<时间>-<进程号>/`。本机已在新建虚拟环境中验证 311 项测试及 14 个参考输出一致。原生 GPU 资产与驾驶环境另见复现说明；这条命令复现论文离线计算。
+脚本创建独立虚拟环境，安装带 SHA-256 的测试与构建依赖，安装项目，运行测试并重算 176 条输入、六种策略共 1,056 条预测。预测文件和逐条评分与固定参考文件逐字节比较；输出写入新的 `build/` 子目录。重复运行会创建新目录。
 
-容器方式：
-
-```bash
-docker build --network=host -f Dockerfile.cpu -t driveclarify-cpu .
-mkdir -p build
-docker run --rm --user "$(id -u):$(id -g)" \
-  -v "$PWD/build:/workspace/DriveClarify/build" driveclarify-cpu
-```
-
-以下命令在仓库根目录运行。CPU 合同测试支持 Python **3.10+**；论文参考输出的逐字节复现固定使用 **Python 3.13**，本机已验证版本为 **3.13.5**。CARLA / SimLingo 使用独立的 Python 3.8 环境。
+手动安装与运行：
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --require-hashes --only-binary=:all: -r requirements/paper.lock.txt
-
-python engineering/reproduce.py doctor --profile paper
-python engineering/reproduce.py test
-python engineering/reproduce.py demo --output build/demo-001
-python engineering/reproduce.py paper --output build/paper-001
+python -m pip install --require-hashes --only-binary=:all: -r requirements/cpu.lock.txt
+python -m pip install --no-build-isolation --no-deps -e .
+python -m pytest
+driveclarify evaluate --output build/evaluation-001
 ```
 
-`demo` 运行早期人工合成 fixture；`paper` 重新执行当前论文的离线预测、评分、选择性指标、配对消融及历史闭环统计。两者的样本与结论不同。所有输出目录必须不存在；再次运行请改为 `demo-002` / `paper-002`。
+输出包含 `predictions.jsonl`、`prediction-lock.json`、`scores.csv`、`summary.csv` 和 `receipt.json`。先锁定预测，再读取标签；44 条任务标签未定义的输入不计正确率。`Random-Query` 是概率为 1/3 的解析期望。
 
-`paper` 会校验 [55 份输入及参考文件](engineering/paper_assets.json)，将所需文件复制到新目录后运行原始脚本，最后逐字节比较 14 个参考输出并生成 `REPRODUCTION_RECEIPT.json`。原始冻结代码、标签和历史结果保持原样。
+## 原生驾驶
 
-本仓库暂按源码目录运行：冻结 schema、fixture 和论文输入位于 Python 包外。`pyproject.toml` 管理默认测试范围，依赖在 `requirements/`；暂不提供 `pip install -e .` 或独立 wheel。
-
-## 模型、原始记录和论文附件
-
-下载清单位于 [release_assets.json](engineering/release_assets.json)，包含固定上游版本、文件大小与 SHA-256。上游 SimLingo 基础权重和 InternVL2-1B 从 Hugging Face 下载；本项目的适配权重与实验归档使用 [GitHub Releases](https://github.com/ry535687-ux/DriveClarify/releases)。**本项目模型分片、历史实验记录、训练来源及论文附件已公开发布到 [v0.1.0-assets](https://github.com/ry535687-ux/DriveClarify/releases/tag/v0.1.0-assets)**；7 个附件的 GitHub 摘要已核对，三个归档已实际公开下载并校验解压。
-
-下载入口：
+按 [CARLA 安装与运行指南](docs/carla.md)准备 Linux x86_64、NVIDIA GPU、独立 Python 3.8 环境、CARLA 0.9.15 与地图，然后运行：
 
 ```bash
-# 4226 份历史场景/轨迹/记录，以及适配训练的配置、输入和选择记录
-python3 engineering/assets.py --profile evidence --output build/assets
-
-# 论文 LaTeX、已有图表与交付附件
-python3 engineering/assets.py --profile paper-artifacts --output build/assets
-
-# 全部原生模型资产、历史记录；至少预留 20 GB 下载及解压空间
-python3 engineering/assets.py --profile native --output build/native-workspace
+driveclarify prepare --workspace build/native-workspace \
+  --carla-root "$PWD/build/carla-install/CARLA_0.9.15" \
+  --native-python "$PWD/build/native-env/bin/python"
+driveclarify assets --output build/native-workspace
+driveclarify benchmark plan --paths build/native-workspace/paths.local.json \
+  --output build/smoke --offscreen
+driveclarify benchmark run --plan build/smoke --dry-run
+driveclarify benchmark run --plan build/smoke
 ```
 
-重复运行可续传；每个文件先验证摘要再使用。适配权重自动合并分片，归档解压到独立目录，已有内容不同则拒绝覆盖。这些命令准备已有资产；原生代码还原、CARLA 地图和硬件条件见[复现说明](engineering/REPRODUCING.md#原生环境与模型)。
+最后一条命令加载模型并启动 CARLA。确认单路线环境后，用 `plan --all` 生成 220 路线 / A0、A1 共 440 次运行；用 `run --resume` 续跑、`collect` 收集首次合法结果。模型固定到公开上游版本和[适配权重 Release](https://github.com/ry535687-ux/DriveClarify/releases/tag/v0.1.0-assets)，下载支持续传、分片合并和完整 SHA-256 校验。
 
-## 开始新的原生驾驶实验
+基准 A0/A1 使用同一适配权重，A1 在澄清上下文为空时透明旁路到原生 SimLingo。它不证明真实答案绑定场景的任务收益。新 GPU 主机的原生环境安装及真实驾驶尚未在本轮验证；最终 220 路线结果由运行者生成。
 
-按[原生启动指南](engineering/BENCH2DRIVE.md)安装独立 Python 3.8 环境、CARLA 0.9.15 和额外地图，再还原源码并下载模型。之后从一条 A0/A1 配对开始：
-
-```bash
-python3 engineering/bench2drive.py plan \
-  --paths build/native-workspace/paths.local.json \
-  --output build/b2d-smoke-001 --offscreen
-python3 engineering/bench2drive.py run --plan build/b2d-smoke-001 --dry-run
-python3 engineering/bench2drive.py run --plan build/b2d-smoke-001
-```
-
-最后一条命令会加载模型并启动 CARLA。试跑确认环境后，用 `plan --all` 生成 220 路线 / 440 次运行的新计划，再用 `run --resume` 续跑、`collect` 收集首次合法结果。已验证 936 个冻结科学源文件、220 个路线和 440 条命令的计划生成；本轮没有实际启动 GPU 驾驶。最终路线结果由复现者生成。
-
-## 实验与入口
-
-| 目标 | 入口 | 所需环境与状态 |
-| --- | --- | --- |
-| 合成决策与状态机验证 | `reproduce.py demo` | CPU；人工合成测试，不是驾驶结果 |
-| 核心回归与开发原型 | `reproduce.py test` | CPU；明确选择测试集，不扫描全部历史实验 |
-| 论文离线主表与消融 | `reproduce.py paper` | CPU；使用冻结输入、标签和历史记录 |
-| 论文图表与排版 | [复现说明](engineering/REPRODUCING.md#图表与论文) | 部分图依赖原生地图、相机归档及外部论文素材 |
-| SimLingo / CARLA 依赖检查 | `reproduce.py doctor --profile native --paths engineering/paths.local.json` | 只读检查；不加载模型、不启动仿真 |
-| 新答案绑定接口 | `driveclarify_paper_runtime/agent_entry.py` | 开发入口；CPU 检查通过，真实分支资格尚未完成 |
-| 新 Bench2Drive 配对实验 | [安装和启动指南](engineering/BENCH2DRIVE.md)、`engineering/bench2drive.py` | 冻结路线/权重；先单路线资格，再 220 路线配对，由读者生成新结果 |
-
-表中的 `reproduce.py` 均指 `engineering/reproduce.py`。原生环境安装、两种不同权重的身份、上游补丁与数据关系，统一见[复现说明](engineering/REPRODUCING.md)。
-
-## 目录导航
+## 目录
 
 ```text
-engineering/                复现 CLI、资产摘要、环境记录与发布指南
-requirements/               CPU / 论文分析 / 绘图依赖
-driveclarify_offline/        早期 CPU 决策器与状态机
-driveclarify_rq1_*/          任务后果关系与条件化分析
-driveclarify_rq2_*/          历史证据、时间与可行动窗口实验
-driveclarify_rq3*/           历史原生闭环与配对评价
-driveclarify_paper_runtime/  新答案绑定开发接口
-driveclarify_*v*/           保留版本身份的研究实现
-experiments/                隔离开发原型与原生输入准备
-tests/                      单元测试及各实验合同测试
-tools/                      各阶段工具；不是一个统一执行队列
-reports/                    实验协议、部分源脚本、冻结输入与历史证据
-deliverables/               论文分析脚本与交付材料
-build/                      新复现结果与本地发布预览，不进入 Git
+src/driveclarify/  核心算法、执行接口、命令工具与必要运行资源
+configs/          本机路径配置示例
+scripts/          原生环境安装
+requirements/     CPU 工具锁、原生依赖和 Conda 清单
+tests/            当前实现的行为和回归测试
+docs/             运行与接口说明
+build/            本机环境、模型和新输出（不进入 Git）
 ```
 
-`reports/` 中也有真实源代码和必要输入，不能把整个目录当作可删除的日志。完整工作区与轻量发布预览的内容有所不同，后者按明确清单收录源码和已验证的离线复现资产。
+`src/driveclarify/resources/` 收录必要输入、参考输出、模型清单、原生补丁与一份含 220 路线的配置；启动时还原实际 XML。接口说明见 [architecture.md](docs/architecture.md)。
 
-## 结果边界
-
-论文离线主实验使用 176 条冻结输入、22 个布局，其中 132 条标签有定义、44 条未定义；六个策略行共产生 1,056 条结果。受控候选、结构化证据、理想回答和等权反事实意图是这些结果的前提。`Random-Query` 是解析期望，不是一次随机驾驶实测；未定义样本不能当作正确或错误。
-
-历史闭环统计的复现只是重新计算已有记录。当前新增答案绑定接口未完成真实分支资格；历史局部停靠两臂都没有 task-correct safe completion。论文使用的另一台机器上的 220 路线 Bench2Drive 汇总缺少本机可追溯的最终逐路线文件，不使用现有中途账本补成完整结果；复现者通过新的启动入口自行生成全量结果。详细边界见[论文交付说明](deliverables/paper_revision_20260915/FINAL_REPORT.md)。
-
-## 开发与发布
+## 容器与开发
 
 ```bash
-# 静态统计源代码依赖和本机绝对路径，不导入实验模块
-python engineering/reproduce.py inventory --output build/inventory.json
-
-# 在新的目录生成源码和离线数据发布预览；不创建远程仓库
-python engineering/reproduce.py export --output build/github-preview-001
+docker build --network=host -f Dockerfile -t driveclarify .
+mkdir -p build
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD/build:/workspace/DriveClarify/build" driveclarify
 ```
 
-开发约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，GitHub 上传流程见[发布指南](engineering/PUBLISHING.md)。[GitHub Actions](https://github.com/ry535687-ux/DriveClarify/actions) 执行 Python 3.10 / 3.13 的 CPU 测试，并在 Python 3.13 重现论文参考输出；请以具体运行记录为准。
+容器运行 CPU 测试和受控评测。需要网络代理的主机可为构建添加 `--build-arg HTTP_PROXY --build-arg HTTPS_PROXY`，继承终端的代理配置。
 
-## 第三方与许可
+项目支持构建 wheel，安装包包含运行资源。修改决策逻辑时检查输入合同、未知证据、预测与标签隔离、答案生效帧及原生控制所有权；行为改变应使用新的参考数据说明原因。GitHub Actions 检查 Python 3.10 / 3.13 下的安装、测试及离线评测。
 
-本项目的原生接口依赖 [SimLingo](https://github.com/RenzKa/simlingo)、[CARLA 0.9.15](https://carla.readthedocs.io/en/0.9.15/start_quickstart/) 及其 Bench2Drive 组件。第三方代码、地图、模型和数据分别遵循原许可。仓库尚未选定自身开源许可证，也未填写论文作者、发表信息或 DOI；许可与作者信息由维护者另行确定；不能据此 README 推定第三方资产的再分发授权。
+## 第三方
+
+原生后端依赖 [SimLingo](https://github.com/RenzKa/simlingo)、[CARLA](https://carla.org/) 和 Bench2Drive；代码、地图、模型分别遵循其原许可。本项目自身尚未选定开源许可证。
+
